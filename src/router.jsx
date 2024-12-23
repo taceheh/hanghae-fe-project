@@ -6,6 +6,8 @@ import LoginPage from "./pages/login/components";
 import RegisterPage from "./pages/register/components";
 import RootSuspense from "./pages/common/components/RootSuspense";
 import {RootErrorBoundary} from "./pages/common/components/RootErrorBoundary";
+import GoogleSignIn from "./pages/test";
+import AuthCallbackHandler from "./utils/AuthCallbackHandler";
 
 const CommonLayout = () => (
     <RootErrorBoundary>
@@ -32,6 +34,12 @@ const router= createBrowserRouter([
                 element:<LoginPage/>,
                 errorElement: <ErrorPage/>,
             },
+            {
+                path: pageRoutes.callback,
+                element: <AuthCallbackHandler />, // 필요한 컴포넌트 추가
+                errorElement: <ErrorPage />,
+              }
+              
         ],
     },
 ]);
