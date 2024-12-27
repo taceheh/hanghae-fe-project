@@ -1,21 +1,21 @@
+import { createBrowserRouter } from "react-router-dom";
 import { pageRoutes } from "./apiRoutes";
 import MainPage from "./pages";
 import ErrorPage from "./pages/error/components/ErrorPage";
-import {createBrowserRouter, Outlet} from "react-router-dom";
-import LoginPage from "./pages/login/components";
+import LoginPage from "./pages/login";
 import RegisterPage from "./pages/register/components";
-import RootSuspense from "./pages/common/components/RootSuspense";
-import {RootErrorBoundary} from "./pages/common/components/RootErrorBoundary";
-import GoogleSignIn from "./pages/test";
-import AuthCallbackHandler from "./utils/AuthCallbackHandler";
+import ProductPage from "./pages/products";
+import CommonLayout from "./pages/common/components/CommonLayout";
+import CartPage from "./pages/carts/components";
 
-const CommonLayout = () => (
-    <RootErrorBoundary>
-      <RootSuspense>
-        <Outlet />
-      </RootSuspense>
-    </RootErrorBoundary>
-  );
+// const CommonLayout = () => (
+//     <RootErrorBoundary>
+//       <RootSuspense>
+//         <Header/>
+//         <Outlet />
+//       </RootSuspense>
+//     </RootErrorBoundary>
+//   );
 
 const router= createBrowserRouter([
     {
@@ -35,10 +35,21 @@ const router= createBrowserRouter([
                 errorElement: <ErrorPage/>,
             },
             {
-                path: pageRoutes.callback,
-                element: <AuthCallbackHandler />, // 필요한 컴포넌트 추가
-                errorElement: <ErrorPage />,
-              }
+                path: pageRoutes.product,
+                element:<ProductPage/>,
+                errorElement: <ErrorPage/>,
+            },
+            {
+                path: pageRoutes.cart,
+                element:<CartPage/>,
+                errorElement: <ErrorPage/>,
+            },
+            
+            // {
+            //     path: pageRoutes.callback,
+            //     element: <AuthCallbackHandler />, // 필요한 컴포넌트 추가    
+            //     errorElement: <ErrorPage />,
+            //   }
               
         ],
     },
