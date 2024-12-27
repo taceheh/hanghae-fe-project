@@ -49,7 +49,12 @@ export default {
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
-  			}
+  			},
+			width: {
+			'600': '600px',
+			'48': '48%',
+			},
+		
   		}
   	}
   },
