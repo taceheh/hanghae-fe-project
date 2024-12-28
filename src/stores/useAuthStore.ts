@@ -1,11 +1,12 @@
+import supabase from '@/supabase';
+import { User } from '@supabase/supabase-js';
 import { create } from 'zustand';
-import supabase from '../supabase';
 
 const useAuthStore = create((set) => ({
   user: null,
   isAuthenticated: false,
 
-  setUser: (user) =>
+  setUser: (user: User | null) =>
     set({
       user,
       isAuthenticated: !!user,

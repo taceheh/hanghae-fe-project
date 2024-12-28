@@ -1,8 +1,14 @@
-import React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import ErrorPage from '../../error/components/ErrorPage';
+import { ReactNode } from 'react';
 
-export const RootErrorBoundary = ({ children }) => {
+interface RootErrorBoundaryProps {
+  children: ReactNode;
+}
+
+export const RootErrorBoundary: React.FC<RootErrorBoundaryProps> = ({
+  children,
+}) => {
   return (
     <ErrorBoundary FallbackComponent={ErrorPage}>{children}</ErrorBoundary>
   );

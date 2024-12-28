@@ -1,22 +1,13 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { pageRoutes } from './apiRoutes';
-import MainPage from './pages';
-import ErrorPage from './pages/error/components/ErrorPage';
-import LoginPage from './pages/login';
-import RegisterPage from './pages/register/components';
-import ProductPage from './pages/products';
 import CommonLayout from './pages/common/components/CommonLayout';
+import ErrorPage from './pages/error/components/ErrorPage';
+import RegisterPage from './pages/register/components';
+import MainPage from './pages';
+import LoginPage from './pages/login';
+import ProductPage from './pages/products';
 import CartPage from './pages/carts/components';
 import Mypage from './pages/mypage/components';
-
-// const CommonLayout = () => (
-//     <RootErrorBoundary>
-//       <RootSuspense>
-//         <Header/>
-//         <Outlet />
-//       </RootSuspense>
-//     </RootErrorBoundary>
-//   );
 
 const router = createBrowserRouter([
   {
@@ -52,12 +43,6 @@ const router = createBrowserRouter([
         element: <Mypage />,
         errorElement: <ErrorPage />,
       },
-
-      // {
-      //     path: pageRoutes.callback,
-      //     element: <AuthCallbackHandler />, // 필요한 컴포넌트 추가
-      //     errorElement: <ErrorPage />,
-      //   }
     ],
   },
 ]);

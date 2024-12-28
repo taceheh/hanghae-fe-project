@@ -5,6 +5,4 @@ export const pageRoutes = {
   product: '/product',
   cart: '/cart',
   mypage: '/mypage',
-  test: '/test',
-  callback: '/auth/callback',
 };

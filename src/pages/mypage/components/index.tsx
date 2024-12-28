@@ -1,5 +1,3 @@
-import React from 'react';
-
 // 여기서 컴포넌트 분기해보자
 const Mypage = () => {
   return (

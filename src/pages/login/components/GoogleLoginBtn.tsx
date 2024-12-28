@@ -1,7 +1,6 @@
 // import { GoogleLogin } from "@react-oauth/google";
-import { saveGoogleUserAPI } from '../../../api/auth';
-import supabase from '../../../supabase';
 import { useEffect } from 'react';
+import supabase from '../../../supabase';
 
 const GoogleLoginBtn = () => {
   useEffect(() => {
@@ -16,7 +15,8 @@ const GoogleLoginBtn = () => {
     fetchUser();
   }, []);
 
-  const handleGoogleLogin = async (response) => {
+  // NOTE: response 타입 찾아야함
+  const handleGoogleLogin = async (response: any) => {
     try {
       console.log('Google OAuth Response:', response);
 
@@ -27,7 +27,7 @@ const GoogleLoginBtn = () => {
           options: {
             redirectTo: 'http://localhost:5173',
             scopes: 'openid email profile',
-            token: response.credential, // Google OAuth 토큰 전달
+            // token: response.credential, // Google OAuth 토큰 전달
           },
         });
 
@@ -38,15 +38,15 @@ const GoogleLoginBtn = () => {
 
       console.log('Google 로그인 데이터:', authData);
 
-      if (userError) {
-        console.error(
-          '사용자를 데이터베이스에 저장하는 중 오류 발생:',
-          userError.message
-        );
-      } else {
-        console.log('사용자가 데이터베이스에 저장되었습니다:', userData);
-      }
-    } catch (error) {
+      // if (userError) {
+      //   console.error(
+      //     '사용자를 데이터베이스에 저장하는 중 오류 발생:',
+      //     userError.message
+      //   );
+      // } else {
+      //   console.log('사용자가 데이터베이스에 저장되었습니다:', userData);
+      // }
+    } catch (error: any) {
       console.error('오류 발생:', error.message);
     }
   };
