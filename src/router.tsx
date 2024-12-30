@@ -3,11 +3,12 @@ import { pageRoutes } from './apiRoutes';
 import CommonLayout from './pages/common/components/CommonLayout';
 import ErrorPage from './pages/error/components/ErrorPage';
 import RegisterPage from './pages/register/components';
-import MainPage from './pages';
+// import MainPage from './pages';
 import LoginPage from './pages/login';
 import ProductPage from './pages/products';
 import CartPage from './pages/carts/components';
 import Mypage from './pages/mypage/components';
+import ProductDetailPage from './pages/products/components/ProductDetail';
 
 const router = createBrowserRouter([
   {
@@ -15,7 +16,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: pageRoutes.main,
-        element: <MainPage />,
+        element: <ProductPage />,
         errorElement: <ErrorPage />,
       },
       {
@@ -31,6 +32,11 @@ const router = createBrowserRouter([
       {
         path: pageRoutes.product,
         element: <ProductPage />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: `${pageRoutes.product}/:id`, // 상세 페이지 경로 추가
+        element: <ProductDetailPage />,
         errorElement: <ErrorPage />,
       },
       {

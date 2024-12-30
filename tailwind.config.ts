@@ -9,6 +9,9 @@ export default {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
+      fontFamily: {
+        sans: ['Poppins', 'sans-serif'], // Poppins를 기본 sans-serif로 설정
+      },
       colors: {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
@@ -50,13 +53,18 @@ export default {
           4: 'hsl(var(--chart-4))',
           5: 'hsl(var(--chart-5))',
         },
-        width: {
-          600: '600px',
-          48: '48%',
-        },
-        backgroundImage: {
-          'coffee-background': "url('./images/coffee-beans.jpg')",
-        },
+        customBlack: '#333',
+      },
+      width: {
+        600: '600px',
+        48: '48%',
+      },
+      height: {
+        60: '60px',
+        12: '3rem',
+      },
+      backgroundImage: {
+        'coffee-background': "url('/images/coffee-beans.jpg')",
       },
     },
   },

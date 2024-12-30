@@ -28,7 +28,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-  padding:0;
+  padding: 0;
 }
 
 h1 {
@@ -70,3 +70,13 @@ button:focus-visible {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+body {
+  @apply flex items-center justify-center min-h-screen font-sans;
+}
+
+@layer utilities {
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    opacity: 1;
+  }
+}
