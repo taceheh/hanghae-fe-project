@@ -1,24 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useProducts } from '@/hooks/useProducts';
 import { IProduct } from '@/types/dto/productDTO';
-import { useNavigate } from 'react-router-dom';
 import { BiHeart, BiSolidCommentDetail, BiSolidHeart } from 'react-icons/bi';
-import { fetchProduct } from '@/api/products';
+import { useNavigate } from 'react-router-dom';
 
 const ProductCardComponent = () => {
-  const [data, setData] = useState<IProduct[]>([]);
   const navigate = useNavigate();
+  const { data, isLoading, error } = useProducts();
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
-  const getProduct = async () => {
-    const products = await fetchProduct();
-    setData(products);
-  };
+  if (error) {
+    return <div>Error fetching products</div>;
+  }
 
-  useEffect(() => {
-    getProduct();
-  }, []);
   return (
     <>
-      {data.map((item) => (
+      {data?.map((item: IProduct) => (
         <div
           onClick={() => navigate(`product/${item.id}`)}
           className="w-[48%] mb-3 relative"
