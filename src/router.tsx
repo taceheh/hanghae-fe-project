@@ -3,12 +3,11 @@ import { pageRoutes } from './apiRoutes';
 import CommonLayout from './pages/common/components/CommonLayout';
 import ErrorPage from './pages/error/components/ErrorPage';
 import RegisterPage from './pages/register/components';
-// import MainPage from './pages';
 import LoginPage from './pages/login';
 import ProductPage from './pages/products';
-import CartPage from './pages/carts/components';
 import Mypage from './pages/mypage/components';
 import ProductDetailPage from './pages/products/components/ProductDetail';
+import CartPage from './pages/carts';
 
 const router = createBrowserRouter([
   {
