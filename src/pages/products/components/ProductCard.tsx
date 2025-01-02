@@ -1,33 +1,26 @@
 import { useEffect, useState } from 'react';
-import supabase from '../../../supabase';
 import { IProduct } from '@/types/dto/productDTO';
 import { useNavigate } from 'react-router-dom';
 import { BiHeart, BiSolidCommentDetail, BiSolidHeart } from 'react-icons/bi';
+import { fetchProduct } from '@/api/products';
 
 const ProductCardComponent = () => {
   const [data, setData] = useState<IProduct[]>([]);
   const navigate = useNavigate();
 
-  // 상품 데이터 가져오기
-  const fetchProduct = async () => {
-    const { data } = await supabase.from('products').select();
-    setData(data || []);
-    // console.log(data);
+  const getProduct = async () => {
+    const products = await fetchProduct();
+    setData(products);
   };
 
-  const moveToDetailPage = (id: string) => {
-    navigate(`product/${id}`);
-  };
   useEffect(() => {
-    fetchProduct();
+    getProduct();
   }, []);
   return (
     <>
       {data.map((item) => (
         <div
-          onClick={() => {
-            moveToDetailPage(item.id);
-          }}
+          onClick={() => navigate(`product/${item.id}`)}
           className="w-[48%] mb-3 relative"
           key={item.id}
         >
