@@ -23,7 +23,7 @@ const CartItemComponent = () => {
         quantity,
         price,
         created_at,
-        product:products (id, name, weight)
+        product:products (id, name, weight,image_url)
       `
       )
       .eq('user_id', userId);
@@ -72,6 +72,12 @@ const CartItemComponent = () => {
             >
               <div className="mr-3">
                 <input type="checkbox" />
+              </div>
+              <div className="h-[110px] mr-3">
+                <img
+                  className="h-[110px] w-[110px]"
+                  src={cartItem.product.image_url}
+                />
               </div>
               <div className="w-full">
                 <div className="flex justify-between w-full">
