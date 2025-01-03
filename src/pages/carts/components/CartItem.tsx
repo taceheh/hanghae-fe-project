@@ -8,6 +8,29 @@ const CartItemComponent = () => {
   // 사용자 인증 정보 가져오기
   const { user } = useAuthStore();
   const [item, setItem] = useState<ICartWithProduct[]>([]);
+  const [itemCounts, setItemCounts] = useState<{ [key: string]: number }>({});
+
+  // 상품 개수 갱신 함수
+  const handleCountChange = (id: string, quantity: string) => {
+    const updatedQuantity = Number(quantity);
+    setItemCounts((prev) => ({
+      ...prev,
+      [id]: updatedQuantity,
+    }));
+    updateProductCount(id, updatedQuantity);
+  };
+  // 상품 수량 변경 함수
+  const updateProductCount = async (cart_id: string, count: number) => {
+    const { data } = await supabase
+      .from('cart')
+      .update({ quantity: count })
+      .eq('id', cart_id);
+
+    if (data) {
+      console.log('수정되었습니다.');
+      return;
+    }
+  };
 
   // 장바구니와 상품 데이터를 가져오는 함수
   const fetchCartWithProducts = async (
@@ -85,15 +108,26 @@ const CartItemComponent = () => {
                   <BiX className="text-2xl text-gray-400 " />
                 </div>
                 <div>
-                  {cartItem.product.weight}g / {cartItem.quantity}개
+                  {cartItem.product.weight}g /{' '}
+                  {itemCounts[cartItem.id] ?? cartItem.quantity}개
                 </div>
+                <input
+                  className="p-2"
+                  type="number"
+                  value={itemCounts[cartItem.id] ?? cartItem.quantity}
+                  min={1}
+                  max={10}
+                  onChange={(e) =>
+                    handleCountChange(cartItem.id, e.target.value)
+                  }
+                />
                 <div>
-                  {Number(cartItem.price * cartItem.quantity).toLocaleString(
-                    'ko-KR'
-                  )}
+                  {Number(
+                    cartItem.price *
+                      (itemCounts[cartItem.id] ?? cartItem.quantity)
+                  ).toLocaleString('ko-KR')}
                   원
                 </div>
-                <button>옵션 변경</button>
               </div>
             </div>
           );
