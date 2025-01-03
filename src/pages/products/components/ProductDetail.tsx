@@ -16,8 +16,6 @@ const ProductDetailPage = () => {
   if (isLoading) return <div>로딩 중...</div>;
   if (error) return <div>에러가 발생했습니다: {error.message}</div>;
 
-  // 상품 개수 상태
-
   // 상품 개수 갱신 함수
   const handleCountChange = (quantity: string) => {
     setCount(Number(quantity));
