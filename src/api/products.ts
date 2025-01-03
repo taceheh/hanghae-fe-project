@@ -10,3 +10,17 @@ export const fetchProduct = async (): Promise<IProduct[]> => {
   }
   return data || [];
 };
+
+// 상품 데이터 가져오기
+export const fetchProductData = async (productId: string) => {
+  if (!productId) throw new Error('상품 ID가 유효하지 않습니다.');
+  const { data, error } = await supabase
+    .from('products')
+    .select()
+    .eq('id', productId)
+    .single();
+  if (error) {
+    console.log('Error fetching product detail : ', error.message);
+  }
+  return data;
+};

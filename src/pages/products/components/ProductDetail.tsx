@@ -1,35 +1,22 @@
+import { useCart } from '@/hooks/cart/useCart';
+import { useProductDetail } from '@/hooks/products/useProductDetail';
 import useAuthStore from '@/stores/auth/useAuthStore';
-import supabase from '@/supabase';
-import { IProduct } from '@/types/dto/productDTO';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { BiHeart } from 'react-icons/bi';
 import { useParams } from 'react-router-dom';
-import { BiHeart, BiSolidCommentDetail, BiSolidHeart } from 'react-icons/bi';
 
 const ProductDetailPage = () => {
-  const { id: productId } = useParams();
+  const { id: productId } = useParams<{ id: string }>();
   const { user } = useAuthStore();
+  const { mutate } = useCart();
 
-  const [product, setProduct] = useState<IProduct | null>(null);
+  const [count, setCount] = useState(1);
+  const { data: product, isLoading, error } = useProductDetail(productId!);
 
-  // 상품 데이터 가져오기
-  const fetchProductData = async () => {
-    const { data, error } = await supabase
-      .from('products')
-      .select()
-      .eq('id', productId)
-      .single();
-    if (data) {
-      setProduct(data);
-    } else {
-      console.log(error);
-    }
-  };
-  useEffect(() => {
-    fetchProductData();
-  }, []);
+  if (isLoading) return <div>로딩 중...</div>;
+  if (error) return <div>에러가 발생했습니다: {error.message}</div>;
 
   // 상품 개수 상태
-  const [count, setCount] = useState(1);
 
   // 상품 개수 갱신 함수
   const handleCountChange = (quantity: string) => {
@@ -42,44 +29,7 @@ const ProductDetailPage = () => {
       console.error('유효한 사용자 또는 상품 정보가 없습니다.');
       return;
     }
-
-    const cartData = {
-      user_id: user?.id,
-      product_id: product?.id,
-      quantity: count,
-      price: product?.price,
-    };
-
-    const { data } = await supabase
-      .from('cart')
-      .select()
-      .eq('user_id', user?.id)
-      .eq('product_id', product?.id)
-      .single();
-
-    if (data) {
-      const newQuantity = count + data.quantity;
-      const { error: updateError } = await supabase
-        .from('cart')
-        .update({ quantity: newQuantity })
-        .eq('product_id', product?.id)
-        .eq('user_id', user?.id);
-      if (updateError) {
-        console.error('장바구니 업데이트 중 에러 발생:', updateError.message);
-      } else {
-        console.log('장바구니가 업데이트되었습니다.');
-      }
-    } else {
-      const { error: insertError } = await supabase
-        .from('cart')
-        .insert(cartData);
-
-      if (insertError) {
-        console.error('장바구니 추가 중 에러 발생:', insertError.message);
-      } else {
-        console.log('장바구니가 추가되었습니다.');
-      }
-    }
+    mutate({ userId: user?.id, product, count });
   };
 
   return (

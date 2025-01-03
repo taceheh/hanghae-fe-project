@@ -1,4 +1,4 @@
-import { useProducts } from '@/hooks/useProducts';
+import { useProducts } from '@/hooks/products/useProducts';
 import { IProduct } from '@/types/dto/productDTO';
 import { BiHeart, BiSolidCommentDetail, BiSolidHeart } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
