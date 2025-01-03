@@ -1,12 +1,11 @@
-import ProductCardComponent from "./components/ProductCard"
+import ProductCardComponent from './components/ProductCard';
 
 const ProductPage = () => {
-  
   return (
-    <div className="flex flex-wrap gap-4 border">
-      <ProductCardComponent></ProductCardComponent>
+    <div className="flex flex-wrap justify-between border">
+      <ProductCardComponent />
     </div>
-  )
-}
+  );
+};
 
-export default ProductPage
+export default ProductPage;

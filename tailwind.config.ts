@@ -54,6 +54,9 @@ export default {
           5: 'hsl(var(--chart-5))',
         },
         customBlack: '#333',
+        pointColor: '#ff4800',
+        clipColor1: '#ffebe3',
+        clipColor2: '#e9e4ff',
       },
       width: {
         600: '600px',
