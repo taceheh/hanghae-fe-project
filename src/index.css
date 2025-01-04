@@ -71,7 +71,69 @@ button:focus-visible {
 @tailwind components;
 @tailwind utilities;
 body {
-  @apply flex items-center justify-center min-h-screen font-sans;
+  @apply flex items-center justify-center min-h-screen font-campton;
+}
+@font-face {
+  font-family: 'Campton';
+  src: url('./assets/fonts/CamptonBlack.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Campton';
+  src: url('./assets/fonts/CamptonBold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Campton';
+  src: url('./assets/fonts/CamptonBook.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Campton';
+  src: url('./assets/fonts/CamptonExtraBold.otf') format('opentype');
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Campton';
+  src: url('./assets/fonts/CamptonExtraLight.otf') format('opentype');
+  font-weight: 200;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Campton';
+  src: url('./assets/fonts/CamptonLight.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Campton';
+  src: url('./assets/fonts/CamptonMedium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Campton';
+  src: url('./assets/fonts/CamptonSemiBold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Campton';
+  src: url('./assets/fonts/CamptonThin.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
 }
 
 @layer utilities {

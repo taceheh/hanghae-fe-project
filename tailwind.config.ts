@@ -10,7 +10,7 @@ export default {
         sm: 'calc(var(--radius) - 4px)',
       },
       fontFamily: {
-        sans: ['Poppins', 'sans-serif'], // Poppins를 기본 sans-serif로 설정
+        campton: ['Campton', 'sans-serif'], // Poppins를 기본 sans-serif로 설정
       },
       colors: {
         background: 'hsl(var(--background))',
