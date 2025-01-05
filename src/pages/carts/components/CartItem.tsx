@@ -1,6 +1,6 @@
 import { useCartDelete } from '@/hooks/cart/useCartDelete';
 import { useCartItems } from '@/hooks/cart/useCartItems';
-import supabase from '@/supabase';
+import { useCartUpdate } from '@/hooks/cart/useCartUpdate';
 import { ICartWithProduct } from '@/types/dto/cartDTO';
 import { useState } from 'react';
 import { BiX } from 'react-icons/bi';
@@ -12,6 +12,7 @@ const CartItemComponent = () => {
   const [itemCounts, setItemCounts] = useState<{ [key: string]: number }>({});
   const { data, isLoading, isError } = useCartItems();
   const { mutate: deleteCartItem } = useCartDelete();
+  const { mutate: updateProductCount } = useCartUpdate();
 
   if (isLoading) <div>Loading...</div>;
   if (isError) <div>Error</div>;
@@ -24,19 +25,7 @@ const CartItemComponent = () => {
       ...prev,
       [id]: updatedQuantity,
     }));
-    updateProductCount(id, updatedQuantity);
-  };
-  // 상품 수량 변경 함수
-  const updateProductCount = async (cart_id: string, count: number) => {
-    const { data } = await supabase
-      .from('cart')
-      .update({ quantity: count })
-      .eq('id', cart_id);
-
-    if (data) {
-      console.log('수정되었습니다.');
-      return;
-    }
+    updateProductCount({ cartId: id, count: updatedQuantity });
   };
 
   return (

@@ -89,3 +89,16 @@ export const deleteCartItem = async (cartId: string, userId: string) => {
   }
   return data;
 };
+
+// 상품 수량 변경 함수
+export const updateProductCount = async (cart_id: string, count: number) => {
+  const { data } = await supabase
+    .from('cart')
+    .update({ quantity: count })
+    .eq('id', cart_id);
+
+  if (data) {
+    console.log('수정되었습니다.');
+    return;
+  }
+};
