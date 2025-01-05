@@ -10,5 +10,6 @@ export const useCartItems = () => {
   return useQuery<ICartWithProduct[]>({
     queryKey: ['cartList', userId],
     queryFn: () => fetchCartWithProducts(userId!),
+    refetchOnWindowFocus: true, // 창 포커스 시 다시 가져오기
   });
 };
