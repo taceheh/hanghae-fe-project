@@ -2,7 +2,7 @@ import { upsertCartData } from '@/api/cart';
 import { IProduct } from '@/types/dto/productDTO';
 import { useMutation } from '@tanstack/react-query';
 
-export const useCart = () => {
+export const useCartInsert = () => {
   const mutation = useMutation({
     mutationKey: ['cart'],
     mutationFn: async ({

@@ -1,92 +1,103 @@
-import useAuthStore from '@/stores/auth/useAuthStore';
-import supabase from '@/supabase';
+import { useCartDelete } from '@/hooks/cart/useCartDelete';
+import { useCartItems } from '@/hooks/cart/useCartItems';
+import { useCartUpdate } from '@/hooks/cart/useCartUpdate';
 import { ICartWithProduct } from '@/types/dto/cartDTO';
 import { useEffect, useState } from 'react';
 import { BiX } from 'react-icons/bi';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Button } from '@/components/ui/button';
 
 const CartItemComponent = () => {
-  // 사용자 인증 정보 가져오기
-  const { user } = useAuthStore();
-  const [item, setItem] = useState<ICartWithProduct[]>([]);
   const [itemCounts, setItemCounts] = useState<{ [key: string]: number }>({});
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [allSelected, setAllSelected] = useState(false);
+  const [totalAmount, setTotalAmount] = useState(0);
+
+  const { data, isLoading, isError } = useCartItems();
+  const { mutate: deleteCartItem } = useCartDelete();
+  const { mutate: updateProductCount } = useCartUpdate();
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>Error occurred while loading cart items.</div>;
+  }
 
   // 상품 개수 갱신 함수
   const handleCountChange = (id: string, quantity: string) => {
     const updatedQuantity = Number(quantity);
-    setItemCounts((prev) => ({
-      ...prev,
-      [id]: updatedQuantity,
-    }));
-    updateProductCount(id, updatedQuantity);
-  };
-  // 상품 수량 변경 함수
-  const updateProductCount = async (cart_id: string, count: number) => {
-    const { data } = await supabase
-      .from('cart')
-      .update({ quantity: count })
-      .eq('id', cart_id);
 
-    if (data) {
-      console.log('수정되었습니다.');
-      return;
-    }
-  };
-
-  // 장바구니와 상품 데이터를 가져오는 함수
-  const fetchCartWithProducts = async (
-    userId: string
-  ): Promise<ICartWithProduct[]> => {
-    const { data, error } = await supabase
-      .from('cart')
-      .select(
-        `
-        id,
-        user_id,
-        product_id,
-        quantity,
-        price,
-        created_at,
-        product:products (id, name, weight,image_url)
-      `
-      )
-      .eq('user_id', userId);
-
-    if (error) {
-      throw new Error(
-        `장바구니와 상품 데이터를 가져오는 중 에러 발생: ${error.message}`
+    setItemCounts((prev) => {
+      const previousQuantity =
+        prev[id] ??
+        data?.find((item: ICartWithProduct) => item.id === id)?.quantity ??
+        1;
+      const itemPrice = Number(
+        data?.find((item: ICartWithProduct) => item.id === id)?.price ?? 0
       );
-    }
 
-    console.log('Raw Data from Supabase:', data);
+      // 기존 금액과 새로운 금액의 차이를 totalAmount에 반영
+      setTotalAmount(
+        (prevTotal) =>
+          prevTotal + (updatedQuantity - previousQuantity) * itemPrice
+      );
 
-    // 데이터 변환 없이 반환
-    return data as ICartWithProduct[];
+      return {
+        ...prev,
+        [id]: updatedQuantity,
+      };
+    });
+
+    // 서버와 동기화
+    updateProductCount({ cartId: id, count: updatedQuantity });
   };
 
-  // 장바구니 데이터를 가져오는 useEffect
+  const handleSelectAll = () => {
+    if (allSelected) {
+      // 전체 선택 해제 시
+      setSelectedItems([]);
+      setTotalAmount(0); // 총 금액 초기화
+    } else {
+      // 전체 선택 시
+      const cartIdArr = data?.map((item: ICartWithProduct) => item.id) || [];
+      const total = data?.reduce(
+        (sum: number, item: ICartWithProduct) =>
+          sum + Number(item.price) * (itemCounts[item.id] ?? item.quantity),
+        0
+      );
+
+      setSelectedItems(cartIdArr);
+      setTotalAmount(total); // 총 금액 업데이트
+    }
+    setAllSelected(!allSelected);
+  };
+
+  const handleSelectItem = (id: string, amount: number) => {
+    if (selectedItems.includes(id)) {
+      setTotalAmount(() => totalAmount - amount);
+      setSelectedItems(selectedItems.filter((itemId) => itemId !== id));
+    } else {
+      setTotalAmount(() => totalAmount + amount);
+      setSelectedItems([...selectedItems, id]);
+    }
+  };
   useEffect(() => {
-    const fetchCartData = async () => {
-      if (!user?.id) return;
-
-      try {
-        const data = await fetchCartWithProducts(user.id);
-        console.log('Fetched Cart Data:', data);
-        setItem(data); // 상태 업데이트
-      } catch (err: any) {
-        console.error(err.message);
-      }
-    };
-
-    fetchCartData();
-  }, [user?.id]);
-
+    const allIds = data?.map((item: ICartWithProduct) => item.id) || [];
+    setAllSelected(
+      allIds.length > 0 &&
+        allIds.every((id: string) => selectedItems.includes(id))
+    );
+  }, [selectedItems, data]);
   return (
     <>
       <div className="">
         <div className="px-4">
-          <input type="checkbox" /> 전체 선택
+          <Checkbox checked={allSelected} onCheckedChange={handleSelectAll} />{' '}
+          전체 선택
         </div>
-        {item?.map((cartItem: ICartWithProduct) => {
+        {data?.map((cartItem: ICartWithProduct) => {
           if (!cartItem.product) return null; // product가 없는 경우 처리
           return (
             <div
@@ -94,7 +105,16 @@ const CartItemComponent = () => {
               className="flex align-baseline m-2 px-2 py-4 border-t-[0.2rem] border-black"
             >
               <div className="mr-3">
-                <input type="checkbox" />
+                <Checkbox
+                  checked={selectedItems.includes(cartItem.id)}
+                  onCheckedChange={() =>
+                    handleSelectItem(
+                      cartItem.id,
+                      Number(cartItem.price) *
+                        (itemCounts[cartItem.id] ?? cartItem.quantity)
+                    )
+                  }
+                />
               </div>
               <div className="h-[110px] mr-3">
                 <img
@@ -105,7 +125,15 @@ const CartItemComponent = () => {
               <div className="w-full">
                 <div className="flex justify-between w-full">
                   <div>[스타벅스] {cartItem.product.name}</div>
-                  <BiX className="text-2xl text-gray-400 " />
+                  <BiX
+                    onClick={() =>
+                      deleteCartItem({
+                        cartId: cartItem.id,
+                        userId: cartItem.user_id,
+                      })
+                    }
+                    className="text-2xl text-gray-400 "
+                  />
                 </div>
                 <div>
                   {cartItem.product.weight}g /{' '}
@@ -122,9 +150,9 @@ const CartItemComponent = () => {
                   }
                 />
                 <div>
-                  {Number(
-                    cartItem.price *
-                      (itemCounts[cartItem.id] ?? cartItem.quantity)
+                  {(
+                    Number(cartItem.price) *
+                    (itemCounts[cartItem.id] ?? cartItem.quantity)
                   ).toLocaleString('ko-KR')}
                   원
                 </div>
@@ -134,9 +162,9 @@ const CartItemComponent = () => {
         })}
       </div>
       <div className="p-4 flex justify-center align-middle bg-gray-100">
-        <button className="bg-customBlack text-white rounded-none font-medium text-xs p-2 w-[96%]">
-          99999원 구매하기
-        </button>
+        <Button className="bg-customBlack text-white rounded-none font-medium text-xs p-2 w-[96%] hover:text-pointColor">
+          {totalAmount}원 구매하기
+        </Button>
       </div>
     </>
   );

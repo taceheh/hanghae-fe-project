@@ -1,4 +1,5 @@
 import supabase from '@/supabase';
+import { ICartWithProduct } from '@/types/dto/cartDTO';
 import { IProduct } from '@/types/dto/productDTO';
 
 export const upsertCartData = async (
@@ -39,5 +40,65 @@ export const upsertCartData = async (
     } else {
       console.log('장바구니가 추가되었습니다.');
     }
+  }
+};
+
+// 장바구니와 상품 데이터를 가져오는 함수
+export const fetchCartWithProducts = async (
+  userId: string
+): Promise<ICartWithProduct[]> => {
+  if (!userId) {
+    throw new Error('유효하지 않은 사용자 ID입니다.');
+  }
+  const { data, error } = await supabase
+    .from('cart')
+    .select(
+      `
+        id,
+        user_id,
+        product_id,
+        quantity,
+        price,
+        created_at,
+        product:products (id, name, weight,image_url)
+      `
+    )
+    .eq('user_id', userId);
+
+  if (error) {
+    throw new Error(
+      `장바구니와 상품 데이터를 가져오는 중 에러 발생: ${error.message}`
+    );
+  }
+
+  console.log('Raw Data from Supabase:', data);
+
+  // 데이터 변환 없이 반환
+  return data;
+};
+
+export const deleteCartItem = async (cartId: string, userId: string) => {
+  const { data, error } = await supabase
+    .from('cart')
+    .delete()
+    .eq('user_id', userId)
+    .eq('id', cartId);
+
+  if (error) {
+    console.log('delete data error: ', error);
+  }
+  return data;
+};
+
+// 상품 수량 변경 함수
+export const updateProductCount = async (cart_id: string, count: number) => {
+  const { data } = await supabase
+    .from('cart')
+    .update({ quantity: count })
+    .eq('id', cart_id);
+
+  if (data) {
+    console.log('수정되었습니다.');
+    return;
   }
 };

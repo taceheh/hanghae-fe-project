@@ -1,4 +1,4 @@
-import { useCart } from '@/hooks/cart/useCart';
+import { useCartInsert } from '@/hooks/cart/useCartInsert';
 import { useProductDetail } from '@/hooks/products/useProductDetail';
 import useAuthStore from '@/stores/auth/useAuthStore';
 import { useState } from 'react';
@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom';
 const ProductDetailPage = () => {
   const { id: productId } = useParams<{ id: string }>();
   const { user } = useAuthStore();
-  const { mutate } = useCart();
+  const { mutate } = useCartInsert();
 
   const [count, setCount] = useState(1);
   const { data: product, isLoading, error } = useProductDetail(productId!);

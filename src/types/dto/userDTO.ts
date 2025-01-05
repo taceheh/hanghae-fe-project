@@ -3,6 +3,6 @@ export interface IUser {
   email: string;
   name: string;
   phonenumber: string | null;
-  address: string | null;
+  address: JSON | null;
   // created_at: string;
 }
