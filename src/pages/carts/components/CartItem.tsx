@@ -1,3 +1,4 @@
+import { useCartItems } from '@/hooks/cart/useCartItems';
 import useAuthStore from '@/stores/auth/useAuthStore';
 import supabase from '@/supabase';
 import { ICartWithProduct } from '@/types/dto/cartDTO';
@@ -6,9 +7,14 @@ import { BiX } from 'react-icons/bi';
 
 const CartItemComponent = () => {
   // 사용자 인증 정보 가져오기
-  const { user } = useAuthStore();
-  const [item, setItem] = useState<ICartWithProduct[]>([]);
+  // const { user } = useAuthStore();
+  // const [item, setItem] = useState<ICartWithProduct[]>([]);
   const [itemCounts, setItemCounts] = useState<{ [key: string]: number }>({});
+  const { data, isLoading, isError } = useCartItems();
+
+  if (isLoading) <div>Loading...</div>;
+  if (isError) <div>Error</div>;
+  console.log(data);
 
   // 상품 개수 갱신 함수
   const handleCountChange = (id: string, quantity: string) => {
@@ -32,37 +38,6 @@ const CartItemComponent = () => {
     }
   };
 
-  // 장바구니와 상품 데이터를 가져오는 함수
-  const fetchCartWithProducts = async (
-    userId: string
-  ): Promise<ICartWithProduct[]> => {
-    const { data, error } = await supabase
-      .from('cart')
-      .select(
-        `
-        id,
-        user_id,
-        product_id,
-        quantity,
-        price,
-        created_at,
-        product:products (id, name, weight,image_url)
-      `
-      )
-      .eq('user_id', userId);
-
-    if (error) {
-      throw new Error(
-        `장바구니와 상품 데이터를 가져오는 중 에러 발생: ${error.message}`
-      );
-    }
-
-    console.log('Raw Data from Supabase:', data);
-
-    // 데이터 변환 없이 반환
-    return data as ICartWithProduct[];
-  };
-
   const deleteCartItem = async (cartId: string, userId: string) => {
     const { data } = await supabase
       .from('cart')
@@ -76,21 +51,21 @@ const CartItemComponent = () => {
   };
 
   // 장바구니 데이터를 가져오는 useEffect
-  useEffect(() => {
-    const fetchCartData = async () => {
-      if (!user?.id) return;
+  // useEffect(() => {
+  //   const fetchCartData = async () => {
+  //     if (!user?.id) return;
 
-      try {
-        const data = await fetchCartWithProducts(user.id);
-        console.log('Fetched Cart Data:', data);
-        setItem(data); // 상태 업데이트
-      } catch (err: any) {
-        console.error(err.message);
-      }
-    };
+  //     try {
+  //       const data = await fetchCartWithProducts(user.id);
+  //       console.log('Fetched Cart Data:', data);
+  //       setItem(data); // 상태 업데이트
+  //     } catch (err: any) {
+  //       console.error(err.message);
+  //     }
+  //   };
 
-    fetchCartData();
-  }, [user?.id]);
+  //   fetchCartData();
+  // }, [user?.id]);
 
   return (
     <>
@@ -98,7 +73,7 @@ const CartItemComponent = () => {
         <div className="px-4">
           <input type="checkbox" /> 전체 선택
         </div>
-        {item?.map((cartItem: ICartWithProduct) => {
+        {data?.map((cartItem: ICartWithProduct) => {
           if (!cartItem.product) return null; // product가 없는 경우 처리
           return (
             <div

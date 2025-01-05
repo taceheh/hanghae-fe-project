@@ -1,4 +1,5 @@
 import supabase from '@/supabase';
+import { ICartWithProduct } from '@/types/dto/cartDTO';
 import { IProduct } from '@/types/dto/productDTO';
 
 export const upsertCartData = async (
@@ -40,6 +41,40 @@ export const upsertCartData = async (
       console.log('장바구니가 추가되었습니다.');
     }
   }
+};
+
+// 장바구니와 상품 데이터를 가져오는 함수
+export const fetchCartWithProducts = async (
+  userId: string
+): Promise<ICartWithProduct[]> => {
+  if (!userId) {
+    throw new Error('유효하지 않은 사용자 ID입니다.');
+  }
+  const { data, error } = await supabase
+    .from('cart')
+    .select(
+      `
+        id,
+        user_id,
+        product_id,
+        quantity,
+        price,
+        created_at,
+        product:products (id, name, weight,image_url)
+      `
+    )
+    .eq('user_id', userId);
+
+  if (error) {
+    throw new Error(
+      `장바구니와 상품 데이터를 가져오는 중 에러 발생: ${error.message}`
+    );
+  }
+
+  console.log('Raw Data from Supabase:', data);
+
+  // 데이터 변환 없이 반환
+  return data;
 };
 
 export const deleteCartData = () => {};
