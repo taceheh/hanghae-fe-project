@@ -41,3 +41,5 @@ export const upsertCartData = async (
     }
   }
 };
+
+export const deleteCartData = () => {};

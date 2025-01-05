@@ -63,6 +63,18 @@ const CartItemComponent = () => {
     return data as ICartWithProduct[];
   };
 
+  const deleteCartItem = async (cartId: string, userId: string) => {
+    const { data } = await supabase
+      .from('cart')
+      .delete()
+      .eq('user_id', userId)
+      .eq('id', cartId);
+
+    if (data) {
+      console.log('delete data : ', data);
+    }
+  };
+
   // 장바구니 데이터를 가져오는 useEffect
   useEffect(() => {
     const fetchCartData = async () => {
@@ -105,7 +117,12 @@ const CartItemComponent = () => {
               <div className="w-full">
                 <div className="flex justify-between w-full">
                   <div>[스타벅스] {cartItem.product.name}</div>
-                  <BiX className="text-2xl text-gray-400 " />
+                  <BiX
+                    onClick={() =>
+                      deleteCartItem(cartItem.id, cartItem.user_id)
+                    }
+                    className="text-2xl text-gray-400 "
+                  />
                 </div>
                 <div>
                   {cartItem.product.weight}g /{' '}
@@ -122,9 +139,9 @@ const CartItemComponent = () => {
                   }
                 />
                 <div>
-                  {Number(
-                    cartItem.price *
-                      (itemCounts[cartItem.id] ?? cartItem.quantity)
+                  {(
+                    Number(cartItem.price) *
+                    (itemCounts[cartItem.id] ?? cartItem.quantity)
                   ).toLocaleString('ko-KR')}
                   원
                 </div>
