@@ -1,8 +1,8 @@
+import { useCartDelete } from '@/hooks/cart/useCartDelete';
 import { useCartItems } from '@/hooks/cart/useCartItems';
-import useAuthStore from '@/stores/auth/useAuthStore';
 import supabase from '@/supabase';
 import { ICartWithProduct } from '@/types/dto/cartDTO';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { BiX } from 'react-icons/bi';
 
 const CartItemComponent = () => {
@@ -11,6 +11,7 @@ const CartItemComponent = () => {
   // const [item, setItem] = useState<ICartWithProduct[]>([]);
   const [itemCounts, setItemCounts] = useState<{ [key: string]: number }>({});
   const { data, isLoading, isError } = useCartItems();
+  const { mutate: deleteCartItem } = useCartDelete();
 
   if (isLoading) <div>Loading...</div>;
   if (isError) <div>Error</div>;
@@ -37,35 +38,6 @@ const CartItemComponent = () => {
       return;
     }
   };
-
-  const deleteCartItem = async (cartId: string, userId: string) => {
-    const { data } = await supabase
-      .from('cart')
-      .delete()
-      .eq('user_id', userId)
-      .eq('id', cartId);
-
-    if (data) {
-      console.log('delete data : ', data);
-    }
-  };
-
-  // 장바구니 데이터를 가져오는 useEffect
-  // useEffect(() => {
-  //   const fetchCartData = async () => {
-  //     if (!user?.id) return;
-
-  //     try {
-  //       const data = await fetchCartWithProducts(user.id);
-  //       console.log('Fetched Cart Data:', data);
-  //       setItem(data); // 상태 업데이트
-  //     } catch (err: any) {
-  //       console.error(err.message);
-  //     }
-  //   };
-
-  //   fetchCartData();
-  // }, [user?.id]);
 
   return (
     <>
@@ -94,7 +66,10 @@ const CartItemComponent = () => {
                   <div>[스타벅스] {cartItem.product.name}</div>
                   <BiX
                     onClick={() =>
-                      deleteCartItem(cartItem.id, cartItem.user_id)
+                      deleteCartItem({
+                        cartId: cartItem.id,
+                        userId: cartItem.user_id,
+                      })
                     }
                     className="text-2xl text-gray-400 "
                   />
