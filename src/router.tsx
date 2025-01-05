@@ -5,9 +5,10 @@ import ErrorPage from './pages/error/components/ErrorPage';
 import RegisterPage from './pages/register/components';
 import LoginPage from './pages/login';
 import ProductPage from './pages/products';
-import Mypage from './pages/mypage/components';
+import Mypage from './pages/mypage';
 import ProductDetailPage from './pages/products/components/ProductDetail';
 import CartPage from './pages/carts';
+import ProfileEditPage from './pages/mypage/components/ProfileEdit';
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,11 @@ const router = createBrowserRouter([
       {
         path: pageRoutes.mypage,
         element: <Mypage />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: pageRoutes.profile,
+        element: <ProfileEditPage />,
         errorElement: <ErrorPage />,
       },
     ],

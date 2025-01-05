@@ -1,9 +1,10 @@
 import GoogleLoginBtn from '@/pages/login/components/GoogleLoginBtn';
 import useAuthStore from '@/stores/auth/useAuthStore';
+import { useNavigate } from 'react-router-dom';
 
 const Mypage = () => {
   const { isLogin } = useAuthStore();
-
+  const navigate = useNavigate();
   if (!isLogin) {
     // 로그인되지 않은 경우
     return (
@@ -41,6 +42,13 @@ const Mypage = () => {
       <div className="border-t border-gray-300"></div>
       <div className="py-8 px-16">
         <div className="pb-8">로그아웃</div>
+        <div
+          className="pb-8 cursor-pointer"
+          onClick={() => navigate('/mypage/profile')}
+        >
+          회원정보 수정
+        </div>
+
         <div>회원 탈퇴하기</div>
       </div>
     </div>

@@ -5,4 +5,5 @@ export const pageRoutes = {
   product: '/product',
   cart: '/cart',
   mypage: '/mypage',
+  profile: '/mypage/profile',
 };

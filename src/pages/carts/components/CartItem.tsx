@@ -32,10 +32,10 @@ const CartItemComponent = () => {
     setItemCounts((prev) => {
       const previousQuantity =
         prev[id] ??
-        data.find((item: ICartWithProduct) => item.id === id)?.quantity ??
+        data?.find((item: ICartWithProduct) => item.id === id)?.quantity ??
         1;
       const itemPrice = Number(
-        data.find((item: ICartWithProduct) => item.id === id)?.price ?? 0
+        data?.find((item: ICartWithProduct) => item.id === id)?.price ?? 0
       );
 
       // 기존 금액과 새로운 금액의 차이를 totalAmount에 반영
@@ -61,8 +61,8 @@ const CartItemComponent = () => {
       setTotalAmount(0); // 총 금액 초기화
     } else {
       // 전체 선택 시
-      const cartIdArr = data.map((item: ICartWithProduct) => item.id) || [];
-      const total = data.reduce(
+      const cartIdArr = data?.map((item: ICartWithProduct) => item.id) || [];
+      const total = data?.reduce(
         (sum: number, item: ICartWithProduct) =>
           sum + Number(item.price) * (itemCounts[item.id] ?? item.quantity),
         0
@@ -84,7 +84,7 @@ const CartItemComponent = () => {
     }
   };
   useEffect(() => {
-    const allIds = data.map((item: ICartWithProduct) => item.id) || [];
+    const allIds = data?.map((item: ICartWithProduct) => item.id) || [];
     setAllSelected(
       allIds.length > 0 &&
         allIds.every((id: string) => selectedItems.includes(id))
