@@ -15,7 +15,11 @@ const ProfileEditPage = () => {
   // 초기값 설정
   useEffect(() => {
     if (user) {
+      //   console.log(user.address);
       setPhoneNum(user.phonenumber || ''); // phonenumber 초기화
+      setPostcode(user?.address?.zonecode || ''); // phonenumber 초기화
+      setAddress(user?.address?.roadAddress || ''); // phonenumber 초기화
+      setDetailAddress(user?.address?.detailAddress || ''); // phonenumber 초기화
     }
   }, [user]);
 
@@ -30,9 +34,9 @@ const ProfileEditPage = () => {
   const handleCancelBtn = () => {
     // 취소 시 초기값으로 되돌리기
     setPhoneNum(user?.phonenumber || '');
-    setPostcode('');
-    setAddress('');
-    setDetailAddress('');
+    setPostcode(user?.address?.zonecode || '');
+    setAddress(user?.address?.roadAddress || '');
+    setDetailAddress(user?.address?.detailAddress || '');
   };
 
   const updateUserProfile = async () => {
