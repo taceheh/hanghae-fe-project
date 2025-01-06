@@ -2,12 +2,11 @@ import { createBrowserRouter } from 'react-router-dom';
 import { pageRoutes } from './apiRoutes';
 import CommonLayout from './pages/common/components/CommonLayout';
 import ErrorPage from './pages/error/components/ErrorPage';
-import RegisterPage from './pages/register/components';
-import LoginPage from './pages/login';
-import ProductPage from './pages/products';
-import Mypage from './pages/mypage';
+import LoginPage from './pages/login/LoginPage';
+import ProductPage from './pages/products/ProductPage';
+import Mypage from './pages/mypage/Mypage';
 import ProductDetailPage from './pages/products/components/ProductDetail';
-import CartPage from './pages/carts';
+import CartPage from './pages/carts/CartPage';
 import ProfileEditPage from './pages/mypage/components/ProfileEdit';
 
 const router = createBrowserRouter([
@@ -17,11 +16,6 @@ const router = createBrowserRouter([
       {
         path: pageRoutes.main,
         element: <ProductPage />,
-        errorElement: <ErrorPage />,
-      },
-      {
-        path: pageRoutes.register,
-        element: <RegisterPage />,
         errorElement: <ErrorPage />,
       },
       {
