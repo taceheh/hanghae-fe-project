@@ -8,10 +8,10 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 
 const CartItemComponent = () => {
-  const [itemCounts, setItemCounts] = useState<{ [key: string]: number }>({});
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [allSelected, setAllSelected] = useState(false);
   const [totalAmount, setTotalAmount] = useState(0);
+  const [itemCounts, setItemCounts] = useState<{ [key: string]: number }>({});
 
   const { data, isLoading, isError } = useCartItems();
   const { mutate: deleteCartItem } = useCartDelete();

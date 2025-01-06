@@ -8,7 +8,7 @@ export const useCartDelete = () => {
       deleteCartItem(cartId, userId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cartList'] });
-      console.log('선택 상품이 장바구니에서 삭제되었습니다.');
+      console.log('선택 상품이 장바구니에서 삭제성공');
     },
     onError: (err) => {
       console.log('선택 상품 삭제 중 에러 발생:', err);
