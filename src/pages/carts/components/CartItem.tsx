@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 
 const CartItemComponent = () => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  // TODO: allSelected, totalAmount,itemCounts 상태관리를 꼭 해야되는지 고려해볼 것
   const [allSelected, setAllSelected] = useState(false);
   const [totalAmount, setTotalAmount] = useState(0);
   const [itemCounts, setItemCounts] = useState<{ [key: string]: number }>({});
@@ -67,6 +68,7 @@ const CartItemComponent = () => {
           sum + Number(item.price) * (itemCounts[item.id] ?? item.quantity),
         0
       );
+      if (total === undefined) return;
 
       setSelectedItems(cartIdArr);
       setTotalAmount(total); // 총 금액 업데이트
@@ -97,7 +99,7 @@ const CartItemComponent = () => {
           <Checkbox checked={allSelected} onCheckedChange={handleSelectAll} />{' '}
           전체 선택
         </div>
-        {data?.map((cartItem: ICartWithProduct) => {
+        {data?.map((cartItem) => {
           if (!cartItem.product) return null; // product가 없는 경우 처리
           return (
             <div

@@ -1,14 +1,25 @@
 import supabase from '@/supabase';
-import { IProduct } from '@/types/dto/productDTO';
+import { ProductResponse } from '@/types/dto/productDTO';
 
 // 상품 리스트 가져오기
-export const fetchProduct = async (): Promise<IProduct[]> => {
-  const { data, error } = await supabase.from('products').select();
+export const fetchProduct = async (page: number): Promise<ProductResponse> => {
+  const pageSize = 10;
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize - 1;
+  const { data, count, error } = await supabase
+    .from('products')
+    .select('*', { count: 'exact' })
+    .range(start, end);
+
   if (error) {
     console.error('Error fetching products:', error.message);
-    return [];
+    return { data: [], totalCount: 0, page };
   }
-  return data || [];
+  return {
+    data: data || [],
+    totalCount: count || 0,
+    page,
+  };
 };
 
 // 상품 데이터 가져오기
