@@ -5,18 +5,15 @@ import { useNavigate } from 'react-router-dom';
 
 const ProductCardComponent = () => {
   const navigate = useNavigate();
-  const { data, isLoading, error } = useProducts();
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useProducts();
 
-  if (error) {
-    return <div>Error fetching products</div>;
-  }
+  // 데이터 평탄화
+  const products = data?.pages.flatMap((page) => page.data) || [];
 
   return (
     <>
-      {data?.map((item: IProduct) => (
+      {products?.map((item: IProduct) => (
         <div
           onClick={() => navigate(`product/${item.id}`)}
           className="w-[48%] mb-3 relative"
