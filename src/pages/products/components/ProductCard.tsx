@@ -1,13 +1,19 @@
 import { useProducts } from '@/hooks/products/useProducts';
 import { IProduct } from '@/types/dto/productDTO';
+import { useEffect } from 'react';
 import { BiHeart, BiSolidCommentDetail, BiSolidHeart } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
+import { useInView } from 'react-intersection-observer';
 
 const ProductCardComponent = () => {
   const navigate = useNavigate();
+  const { ref, inView } = useInView();
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useProducts();
-
+  useEffect(() => {
+    console.log('화면이 있습니까?', inView);
+    if (inView && hasNextPage && !isFetchingNextPage) fetchNextPage();
+  }, [inView]);
   // 데이터 평탄화
   const products = data?.pages.flatMap((page) => page.data) || [];
 
@@ -45,9 +51,15 @@ const ProductCardComponent = () => {
               <BiSolidCommentDetail className="inline" /> 0
             </div>
           </div>
-          {/* <button onClick={fetchData}>확인</button> */}
         </div>
       ))}
+      {hasNextPage ? (
+        <footer ref={ref} className="flex justify-center w-full">
+          <img className="w-20" src="/images/loading-spinner.gif" />
+        </footer>
+      ) : (
+        <></>
+      )}
     </>
   );
 };
