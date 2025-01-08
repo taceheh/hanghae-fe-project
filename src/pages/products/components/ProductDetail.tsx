@@ -1,17 +1,22 @@
 import { useCartInsert } from '@/hooks/cart/useCartInsert';
 import { useProductDetail } from '@/hooks/products/useProductDetail';
 import useAuthStore from '@/stores/auth/useAuthStore';
+import supabase from '@/supabase';
 import { useState } from 'react';
 import { BiHeart } from 'react-icons/bi';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const ProductDetailPage = () => {
   const { id: productId } = useParams<{ id: string }>();
-  const { user } = useAuthStore();
+  const { user, isLogin } = useAuthStore();
   const { mutate } = useCartInsert();
 
   const [count, setCount] = useState(1);
+
+  const [isLiked, setIsLiked] = useState(false);
   const { data: product, isLoading, error } = useProductDetail(productId!);
+
+  const navigate = useNavigate();
 
   if (isLoading) return <div>로딩 중...</div>;
   if (error) return <div>에러가 발생했습니다: {error.message}</div>;
@@ -30,6 +35,20 @@ const ProductDetailPage = () => {
     mutate({ userId: user?.id, product, count });
   };
 
+  // const handleLikeBtn = async (productId: string) => {
+  //   if (isLogin) {
+  //     if (isLiked) {
+  //     } else {
+  //       const { data } = await supabase.from('likes').insert({
+  //         user_id: user?.id,
+  //         product_id: productId,
+  //       });
+  //       console.log(data);
+  //     }
+  //   } else {
+  //     navigate('/login');
+  //   }
+  // };
   return (
     <>
       <div className="">
@@ -49,7 +68,10 @@ const ProductDetailPage = () => {
                 {product?.flavor}
               </span>
             </div>
-            <BiHeart className=" text-2xl text-gray-400 z-50 cursor-pointer" />
+            <BiHeart
+              // onClick={}
+              className=" text-2xl text-gray-400 z-50 cursor-pointer"
+            />
           </div>
           <div className="py-4"> {product?.name}</div>
           <div className="line-through text-sm text-gray-400">

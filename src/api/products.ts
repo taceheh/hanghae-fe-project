@@ -35,3 +35,22 @@ export const fetchProductData = async (productId: string) => {
   }
   return data;
 };
+
+// 좋아요 등록
+export const insertLike = async (userId: string, productId: string) => {
+  const { error } = await supabase.from('likes').insert({
+    user_id: userId,
+    product_id: productId,
+  });
+  if (error) console.log('좋아요 등록 에러 : ', error);
+};
+
+// 좋아요 취소
+export const deleteLike = async (userId: string, productId: string) => {
+  const { error } = await supabase
+    .from('likes')
+    .delete()
+    .eq('user_id', userId)
+    .eq('product_id', productId);
+  if (error) console.log('좋아요 등록 취소 에러 : ', error);
+};
