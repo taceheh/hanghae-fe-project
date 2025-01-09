@@ -1,5 +1,6 @@
 import supabase from '@/supabase';
 import { ProductResponse } from '@/types/dto/productDTO';
+import { PostgrestSingleResponse } from '@supabase/supabase-js';
 
 // 상품 리스트 가져오기
 export const fetchProduct = async (page: number): Promise<ProductResponse> => {
@@ -36,21 +37,66 @@ export const fetchProductData = async (productId: string) => {
   return data;
 };
 
+export const fetchIsLiked = async (
+  productId: string,
+  userId: string
+): Promise<boolean> => {
+  const { data, error } = await supabase
+    .from('likes')
+    .select('id')
+    .eq('product_id', productId)
+    .eq('user_id', userId)
+    .single();
+
+  if (error && error.code !== 'PGRST116') {
+    // PGRST116은 데이터가 없을 때의 에러 코드
+    throw new Error('좋아요 상태 확인 실패');
+  }
+
+  return !!data; // 데이터가 있으면 true, 없으면 false
+};
+
 export const toggleLikeAPI = async (
   userId: string,
   productId: string,
   action: 'LIKE' | 'UNLIKE'
+): Promise<void> => {
+  try {
+    if (action === 'LIKE') {
+      const { error } = await supabase.from('likes').insert({
+        user_id: userId,
+        product_id: productId,
+      });
+      if (error) throw error;
+    } else {
+      const { error } = await supabase
+        .from('likes')
+        .delete()
+        .eq('user_id', userId)
+        .eq('product_id', productId);
+      if (error) throw error;
+    }
+    // return true; // 성공 시 true 반환
+  } catch (error) {
+    console.error('Supabase Error:', error);
+    // return false; // 실패 시 false 반환
+  }
+};
+
+export const updateLike = async (
+  isLiked: boolean,
+  productId: string,
+  userId: string
 ) => {
-  if (action === 'LIKE') {
-    return await supabase.from('likes').insert({
-      user_id: userId,
-      product_id: productId,
-    });
-  } else {
+  if (isLiked) {
     await supabase
       .from('likes')
       .delete()
-      .eq('user_id', userId)
-      .eq('product_id', productId);
+      .eq('product_id', productId)
+      .eq('user_id', userId);
+  } else {
+    await supabase
+      .from('likes')
+      .insert({ product_id: productId, user_id: userId });
   }
 };

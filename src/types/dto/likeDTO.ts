@@ -4,3 +4,8 @@ export interface ILike {
   product_id: string;
   created_at: string;
 }
+export interface likeType {
+  userId: string;
+  productId: string;
+  action: 'LIKE' | 'UNLIKE';
+}

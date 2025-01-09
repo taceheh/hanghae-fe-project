@@ -1,19 +1,24 @@
 import { useCartInsert } from '@/hooks/cart/useCartInsert';
+import { useIsLiked } from '@/hooks/products/useIsLiked';
+import { useLike } from '@/hooks/products/useLike';
 import { useProductDetail } from '@/hooks/products/useProductDetail';
 import useAuthStore from '@/stores/auth/useAuthStore';
-import supabase from '@/supabase';
 import { useState } from 'react';
-import { BiHeart } from 'react-icons/bi';
+import { BiHeart, BiSolidHeart } from 'react-icons/bi';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const ProductDetailPage = () => {
   const { id: productId } = useParams<{ id: string }>();
   const { user, isLogin } = useAuthStore();
   const { mutate } = useCartInsert();
-
+  const userId = user?.id;
+  if (productId === undefined) return;
+  if (userId === undefined) return;
+  const { data: isLiked } = useIsLiked(productId, userId);
+  if (isLiked === undefined) return;
   const [count, setCount] = useState(1);
+  const { mutate: likeMutate } = useLike(isLiked, productId, userId);
 
-  const [isLiked, setIsLiked] = useState(false);
   const { data: product, isLoading, error } = useProductDetail(productId!);
 
   const navigate = useNavigate();
@@ -35,20 +40,15 @@ const ProductDetailPage = () => {
     mutate({ userId: user?.id, product, count });
   };
 
-  // const handleLikeBtn = async (productId: string) => {
-  //   if (isLogin) {
-  //     if (isLiked) {
-  //     } else {
-  //       const { data } = await supabase.from('likes').insert({
-  //         user_id: user?.id,
-  //         product_id: productId,
-  //       });
-  //       console.log(data);
-  //     }
-  //   } else {
-  //     navigate('/login');
-  //   }
-  // };
+  const handleLikeToggle = () => {
+    if (!isLogin) {
+      navigate('/login'); // 로그인 페이지로 이동
+      return;
+    }
+
+    likeMutate();
+  };
+
   return (
     <>
       <div className="">
@@ -68,10 +68,17 @@ const ProductDetailPage = () => {
                 {product?.flavor}
               </span>
             </div>
-            <BiHeart
-              // onClick={}
-              className=" text-2xl text-gray-400 z-50 cursor-pointer"
-            />
+            {isLiked ? (
+              <BiSolidHeart
+                onClick={handleLikeToggle}
+                className=" text-2xl text-pointColor z-50 cursor-pointer"
+              />
+            ) : (
+              <BiHeart
+                onClick={handleLikeToggle}
+                className=" text-2xl text-gray-400 z-50 cursor-pointer"
+              />
+            )}
           </div>
           <div className="py-4"> {product?.name}</div>
           <div className="line-through text-sm text-gray-400">
