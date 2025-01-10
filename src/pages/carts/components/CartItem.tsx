@@ -16,7 +16,6 @@ const CartItemComponent = () => {
   const { mutate: deleteCartItem } = useCartDelete();
   const { mutate: updateProductCount } = useCartUpdate();
   // TODO: allSelected, totalAmount,itemCounts 상태관리를 꼭 해야되는지 고려해볼 것
-  const [totalAmount, setTotalAmount] = useState(0);
   const [itemCounts, setItemCounts] = useState<{ [key: string]: number }>({});
 
   if (isLoading) {
@@ -68,22 +67,19 @@ const CartItemComponent = () => {
     }
   };
 
-  const handleSelectItem = (id: string, amount: number) => {
-    if (selectedItems.includes(id)) {
-      setTotalAmount(() => totalAmount - amount);
-      setSelectedItems(selectedItems.filter((itemId) => itemId !== id));
-    } else {
-      setTotalAmount(() => totalAmount + amount);
-      setSelectedItems([...selectedItems, id]);
-    }
-  };
-  useEffect(() => {
-    const allIds = data?.map((item: ICartWithProduct) => item.id) || [];
-    setAllSelected(
-      allIds.length > 0 &&
-        allIds.every((id: string) => selectedItems.includes(id))
+  const calculateTotalAmount = () => {
+    return (
+      data?.reduce((sum, item) => {
+        if (selectedItems.includes(item.id)) {
+          return sum + item.price * item.quantity;
+        }
+        return sum;
+      }, 0) || 0
     );
-  }, [selectedItems, data]);
+  };
+
+  <div>총 금액: </div>;
+
   return (
     <>
       <div className="">
@@ -157,7 +153,7 @@ const CartItemComponent = () => {
       </div>
       <div className="p-4 flex justify-center align-middle bg-gray-100">
         <Button className="bg-customBlack text-white rounded-none font-medium text-xs p-2 w-[96%] hover:text-pointColor">
-          {totalAmount}원 구매하기
+          {calculateTotalAmount()}원 구매하기
         </Button>
       </div>
     </>
