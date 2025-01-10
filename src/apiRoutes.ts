@@ -6,4 +6,5 @@ export const pageRoutes = {
   cart: '/cart',
   mypage: '/mypage',
   profile: '/mypage/profile',
+  order: '/order',
 };

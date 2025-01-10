@@ -5,15 +5,14 @@ import { BiX } from 'react-icons/bi';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import useCartStore from '@/stores/cart/useCartStore';
+import { calculateTotalAmount } from '@/utils/calculateTotalAmount';
 
 const CartItemComponent = () => {
-  // const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const { selectedItems, setSelectedItems, clearSelectedItems } =
     useCartStore();
   const { data, isLoading, isError } = useCartItems();
   const { mutate: deleteCartItem } = useCartDelete();
   const { mutate: updateProductCount } = useCartUpdate();
-  // TODO: allSelected, totalAmount,itemCounts 상태관리를 꼭 해야되는지 고려해볼 것
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -48,15 +47,14 @@ const CartItemComponent = () => {
     updateProductCount({ cartId: id, count: quantity });
   };
 
-  const calculateTotalAmount = () => {
-    return (
-      data?.reduce((sum, item) => {
-        if (selectedItems.includes(item.id)) {
-          return sum + Number(item.price) * item.quantity;
-        }
-        return sum;
-      }, 0) || 0
-    );
+  const handleDeleteCart = async (cartId: string, userId: string) => {
+    try {
+      await deleteCartItem({ cartId, userId });
+      const newItems = selectedItems.filter((id) => id !== cartId);
+      setSelectedItems(newItems);
+    } catch (error) {
+      console.error('삭제 실패:', error);
+    }
   };
 
   return (
@@ -90,10 +88,7 @@ const CartItemComponent = () => {
                   <div>[스타벅스] {cartItem.product.name}</div>
                   <BiX
                     onClick={() =>
-                      deleteCartItem({
-                        cartId: cartItem.id,
-                        userId: cartItem.user_id,
-                      })
+                      handleDeleteCart(cartItem.id, cartItem.user_id)
                     }
                     className="text-2xl text-gray-400 "
                   />
@@ -124,7 +119,7 @@ const CartItemComponent = () => {
       </div>
       <div className="p-4 flex justify-center align-middle bg-gray-100">
         <Button className="bg-customBlack text-white rounded-none font-medium text-xs p-2 w-[96%] hover:text-pointColor">
-          {calculateTotalAmount()}원 구매하기
+          {calculateTotalAmount(data, selectedItems)}원 구매하기
         </Button>
       </div>
     </>
