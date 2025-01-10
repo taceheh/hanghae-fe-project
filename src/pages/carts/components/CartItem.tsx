@@ -6,17 +6,18 @@ import { useEffect, useState } from 'react';
 import { BiX } from 'react-icons/bi';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
+import useCartStore from '@/stores/cart/useCartStore';
 
 const CartItemComponent = () => {
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  // TODO: allSelected, totalAmount,itemCounts 상태관리를 꼭 해야되는지 고려해볼 것
-  const [allSelected, setAllSelected] = useState(false);
-  const [totalAmount, setTotalAmount] = useState(0);
-  const [itemCounts, setItemCounts] = useState<{ [key: string]: number }>({});
-
+  // const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const { selectedItems, setSelectedItems, clearSelectedItems } =
+    useCartStore();
   const { data, isLoading, isError } = useCartItems();
   const { mutate: deleteCartItem } = useCartDelete();
   const { mutate: updateProductCount } = useCartUpdate();
+  // TODO: allSelected, totalAmount,itemCounts 상태관리를 꼭 해야되는지 고려해볼 것
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [itemCounts, setItemCounts] = useState<{ [key: string]: number }>({});
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -55,26 +56,7 @@ const CartItemComponent = () => {
     updateProductCount({ cartId: id, count: updatedQuantity });
   };
 
-  const handleSelectAll = () => {
-    if (allSelected) {
-      // 전체 선택 해제 시
-      setSelectedItems([]);
-      setTotalAmount(0); // 총 금액 초기화
-    } else {
-      // 전체 선택 시
-      const cartIdArr = data?.map((item: ICartWithProduct) => item.id) || [];
-      const total = data?.reduce(
-        (sum: number, item: ICartWithProduct) =>
-          sum + Number(item.price) * (itemCounts[item.id] ?? item.quantity),
-        0
-      );
-      if (total === undefined) return;
-
-      setSelectedItems(cartIdArr);
-      setTotalAmount(total); // 총 금액 업데이트
-    }
-    setAllSelected(!allSelected);
-  };
+  const [allSelected, setAllSelected] = useState(false);
 
   const handleSelectItem = (id: string, amount: number) => {
     if (selectedItems.includes(id)) {

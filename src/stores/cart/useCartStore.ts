@@ -9,3 +9,4 @@ const useCartStore = create<CartStore>((set) => ({
       selectedItems: [],
     }),
 }));
+export default useCartStore;
