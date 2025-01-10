@@ -10,21 +10,21 @@ import { useNavigate, useParams } from 'react-router-dom';
 const ProductDetailPage = () => {
   const { id: productId } = useParams<{ id: string }>();
   const { user, isLogin } = useAuthStore();
-  const { mutate } = useCartInsert();
-  const userId = user?.id;
-  if (productId === undefined) return;
-  if (userId === undefined) return;
-  const { data: isLiked } = useIsLiked(productId, userId);
-  if (isLiked === undefined) return;
-  const [count, setCount] = useState(1);
-  const { mutate: likeMutate } = useLike(isLiked, productId, userId);
-
-  const { data: product, isLoading, error } = useProductDetail(productId!);
-
   const navigate = useNavigate();
 
+  const userId = user?.id;
+  const [count, setCount] = useState(1);
+
+  const { data: product, isLoading, error } = useProductDetail(productId!);
+  const { data: isLiked } = useIsLiked(productId!, userId!);
+  const { mutate: likeMutate } = useLike(isLiked ?? false, productId!, userId!);
+  const { mutate: cartMutate } = useCartInsert();
+
+  // 기본 검증
+  if (!productId || !userId) return <div>잘못된 요청입니다.</div>;
   if (isLoading) return <div>로딩 중...</div>;
   if (error) return <div>에러가 발생했습니다: {error.message}</div>;
+  if (isLiked === undefined) return <div>좋아요 상태를 확인 중...</div>;
 
   // 상품 개수 갱신 함수
   const handleCountChange = (quantity: string) => {
@@ -37,7 +37,7 @@ const ProductDetailPage = () => {
       console.error('유효한 사용자 또는 상품 정보가 없습니다.');
       return;
     }
-    mutate({ userId: user?.id, product, count });
+    cartMutate({ userId: user?.id, product, count });
   };
 
   const handleLikeToggle = () => {
