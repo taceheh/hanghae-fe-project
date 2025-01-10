@@ -56,7 +56,17 @@ const CartItemComponent = () => {
     updateProductCount({ cartId: id, count: updatedQuantity });
   };
 
-  const [allSelected, setAllSelected] = useState(false);
+  const isAllSelected =
+    selectedItems.length > 0 && selectedItems.length === data?.length;
+
+  const handleSelectAll = () => {
+    if (isAllSelected) {
+      clearSelectedItems();
+    } else {
+      const cartIds = data?.map((item) => item.id) || [];
+      setSelectedItems(cartIds);
+    }
+  };
 
   const handleSelectItem = (id: string, amount: number) => {
     if (selectedItems.includes(id)) {
