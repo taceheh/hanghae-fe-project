@@ -1,8 +1,6 @@
 import { useCartDelete } from '@/hooks/cart/useCartDelete';
 import { useCartItems } from '@/hooks/cart/useCartItems';
 import { useCartUpdate } from '@/hooks/cart/useCartUpdate';
-import { ICartWithProduct } from '@/types/dto/cartDTO';
-import { useEffect, useState } from 'react';
 import { BiX } from 'react-icons/bi';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
