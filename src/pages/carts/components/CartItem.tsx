@@ -16,7 +16,6 @@ const CartItemComponent = () => {
   const { mutate: deleteCartItem } = useCartDelete();
   const { mutate: updateProductCount } = useCartUpdate();
   // TODO: allSelected, totalAmount,itemCounts 상태관리를 꼭 해야되는지 고려해볼 것
-  const [itemCounts, setItemCounts] = useState<{ [key: string]: number }>({});
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -25,35 +24,6 @@ const CartItemComponent = () => {
   if (isError) {
     return <div>Error occurred while loading cart items.</div>;
   }
-
-  // 상품 개수 갱신 함수
-  const handleCountChange = (id: string, quantity: string) => {
-    const updatedQuantity = Number(quantity);
-
-    setItemCounts((prev) => {
-      const previousQuantity =
-        prev[id] ??
-        data?.find((item: ICartWithProduct) => item.id === id)?.quantity ??
-        1;
-      const itemPrice = Number(
-        data?.find((item: ICartWithProduct) => item.id === id)?.price ?? 0
-      );
-
-      // 기존 금액과 새로운 금액의 차이를 totalAmount에 반영
-      setTotalAmount(
-        (prevTotal) =>
-          prevTotal + (updatedQuantity - previousQuantity) * itemPrice
-      );
-
-      return {
-        ...prev,
-        [id]: updatedQuantity,
-      };
-    });
-
-    // 서버와 동기화
-    updateProductCount({ cartId: id, count: updatedQuantity });
-  };
 
   const isAllSelected =
     selectedItems.length > 0 && selectedItems.length === data?.length;
@@ -67,24 +37,35 @@ const CartItemComponent = () => {
     }
   };
 
+  const handleSelectItem = (id: string) => {
+    if (selectedItems.includes(id)) {
+      setSelectedItems(selectedItems.filter((itemId) => itemId !== id));
+    } else {
+      setSelectedItems([...selectedItems, id]);
+    }
+  };
+
+  // 상품 개수 갱신 함수
+  const handleCountChange = (id: string, quantity: number) => {
+    updateProductCount({ cartId: id, count: quantity });
+  };
+
   const calculateTotalAmount = () => {
     return (
       data?.reduce((sum, item) => {
         if (selectedItems.includes(item.id)) {
-          return sum + item.price * item.quantity;
+          return sum + Number(item.price) * item.quantity;
         }
         return sum;
       }, 0) || 0
     );
   };
 
-  <div>총 금액: </div>;
-
   return (
     <>
       <div className="">
         <div className="px-4">
-          <Checkbox checked={allSelected} onCheckedChange={handleSelectAll} />{' '}
+          <Checkbox checked={isAllSelected} onCheckedChange={handleSelectAll} />{' '}
           전체 선택
         </div>
         {data?.map((cartItem) => {
@@ -97,13 +78,7 @@ const CartItemComponent = () => {
               <div className="mr-3">
                 <Checkbox
                   checked={selectedItems.includes(cartItem.id)}
-                  onCheckedChange={() =>
-                    handleSelectItem(
-                      cartItem.id,
-                      Number(cartItem.price) *
-                        (itemCounts[cartItem.id] ?? cartItem.quantity)
-                    )
-                  }
+                  onCheckedChange={() => handleSelectItem(cartItem.id)}
                 />
               </div>
               <div className="h-[110px] mr-3">
@@ -126,24 +101,22 @@ const CartItemComponent = () => {
                   />
                 </div>
                 <div>
-                  {cartItem.product.weight}g /{' '}
-                  {itemCounts[cartItem.id] ?? cartItem.quantity}개
+                  {cartItem.product.weight}g / {cartItem.quantity}개
                 </div>
                 <input
                   className="p-2"
                   type="number"
-                  value={itemCounts[cartItem.id] ?? cartItem.quantity}
+                  value={cartItem.quantity}
                   min={1}
                   max={10}
                   onChange={(e) =>
-                    handleCountChange(cartItem.id, e.target.value)
+                    handleCountChange(cartItem.id, Number(e.target.value))
                   }
                 />
                 <div>
-                  {(
-                    Number(cartItem.price) *
-                    (itemCounts[cartItem.id] ?? cartItem.quantity)
-                  ).toLocaleString('ko-KR')}
+                  {(Number(cartItem.price) * cartItem.quantity).toLocaleString(
+                    'ko-KR'
+                  )}
                   원
                 </div>
               </div>
