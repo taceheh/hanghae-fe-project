@@ -8,7 +8,7 @@ import Mypage from './pages/mypage/Mypage';
 import ProductDetailPage from './pages/products/components/ProductDetail';
 import CartPage from './pages/carts/CartPage';
 import ProfileEditPage from './pages/mypage/components/ProfileEdit';
-import OrderPage from './pages/order/components/OrderPage';
+import OrderPage from './pages/order/OrderPage';
 
 const router = createBrowserRouter([
   {
