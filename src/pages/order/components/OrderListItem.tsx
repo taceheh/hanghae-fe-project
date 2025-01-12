@@ -1,13 +1,10 @@
-import React from 'react';
 import { ICartWithProduct } from '@/types/dto/cartDTO';
 
 interface OrderListComponentProps {
   product: ICartWithProduct['product']; // ICartWithProduct에서 product만 사용
 }
 
-export const OrderListComponent: React.FC<OrderListComponentProps> = ({
-  product,
-}) => {
+export const OrderListComponent = ({ product }: OrderListComponentProps) => {
   return (
     <div>
       <div>상품명: {product.name}</div>

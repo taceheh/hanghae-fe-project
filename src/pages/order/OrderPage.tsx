@@ -3,21 +3,19 @@ import { useCartItems } from '@/hooks/cart/useCartItems';
 import useAuthStore from '@/stores/auth/useAuthStore';
 
 import useCartStore from '@/stores/cart/useCartStore';
-import { useEffect } from 'react';
+import { useMemo } from 'react';
 import { OrderListComponent } from './components/OrderListItem';
 import { calculateTotalAmount } from '@/utils/calculateTotalAmount';
 const OrderPage = () => {
   const { selectedItems, setSelectedItems } = useCartStore();
   const { user } = useAuthStore();
   const { data } = useCartItems();
+
   // selectedItems의 id와 data의 id가 일치하는 애들만 필터링 해줄건데
-  const filteredCartData = data?.filter((item) =>
-    selectedItems.includes(item.id)
-  );
-  useEffect(() => {
-    console.log('filtered', filteredCartData);
-    console.log(user?.address);
-  }, []);
+  const filteredCartData = useMemo(() => {
+    return data?.filter((item) => selectedItems.includes(item.id));
+  }, [data, selectedItems]);
+
   return (
     <div>
       <div className="flex align-baseline m-2 px-2 py-4 border-t-[0.2rem] border-black">
