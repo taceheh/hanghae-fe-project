@@ -6,6 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import useCartStore from '@/stores/cart/useCartStore';
 import { calculateTotalAmount } from '@/utils/calculateTotalAmount';
+import { useNavigate } from 'react-router-dom';
 
 const CartItemComponent = () => {
   const { selectedItems, setSelectedItems, clearSelectedItems } =
@@ -13,6 +14,7 @@ const CartItemComponent = () => {
   const { data, isLoading, isError } = useCartItems();
   const { mutate: deleteCartItem } = useCartDelete();
   const { mutate: updateProductCount } = useCartUpdate();
+  const navigate = useNavigate();
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -118,7 +120,10 @@ const CartItemComponent = () => {
         })}
       </div>
       <div className="p-4 flex justify-center align-middle bg-gray-100">
-        <Button className="bg-customBlack text-white rounded-none font-medium text-xs p-2 w-[96%] hover:text-pointColor">
+        <Button
+          onClick={() => navigate('/order')}
+          className="bg-customBlack text-white rounded-none font-medium text-xs p-2 w-[96%] hover:text-pointColor"
+        >
           {calculateTotalAmount(data, selectedItems)}원 구매하기
         </Button>
       </div>
