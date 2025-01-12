@@ -7,4 +7,5 @@ export const pageRoutes = {
   mypage: '/mypage',
   profile: '/mypage/profile',
   order: '/order',
+  orderReceipt: '/order/receipt',
 };

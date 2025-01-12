@@ -7,8 +7,8 @@ import ProductPage from './pages/products/ProductPage';
 import Mypage from './pages/mypage/Mypage';
 import ProductDetailPage from './pages/products/components/ProductDetail';
 import CartPage from './pages/carts/CartPage';
-import ProfileEditPage from './pages/mypage/components/ProfileEdit';
 import OrderPage from './pages/order/OrderPage';
+import OrderReceiptPage from './pages/order/OrderReceiptPage';
 
 const router = createBrowserRouter([
   {
@@ -47,6 +47,11 @@ const router = createBrowserRouter([
       {
         path: pageRoutes.order,
         element: <OrderPage />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: pageRoutes.orderReceipt,
+        element: <OrderReceiptPage />,
         errorElement: <ErrorPage />,
       },
     ],
