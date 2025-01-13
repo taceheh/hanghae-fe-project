@@ -29,6 +29,7 @@ const OrderPage = () => {
       console.error('로그인 정보가 없습니다.');
       return;
     }
+    // const cartId = selectedItems;
     const orderData = {
       user_id: user.id,
       total_price: calculateTotalAmount(filteredCartData, selectedItems) + 3000,
@@ -40,7 +41,7 @@ const OrderPage = () => {
       shipping_phone: user.id,
       quantity: calculateQuantity(selectedItems),
     };
-    orderMutate(orderData);
+    orderMutate({ orderData, cartId: selectedItems });
   };
   return (
     <div className="mt-6">
