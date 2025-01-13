@@ -5,7 +5,7 @@ import { BiX } from 'react-icons/bi';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import useCartStore from '@/stores/cart/useCartStore';
-import { calculateTotalAmount } from '@/utils/calculateTotalAmount';
+import { calculateTotalAmount } from '@/utils/cartUtil';
 import { useNavigate } from 'react-router-dom';
 
 const CartItemComponent = () => {

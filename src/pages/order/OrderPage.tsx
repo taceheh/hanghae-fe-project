@@ -2,12 +2,20 @@ import { Button } from '@/components/ui/button';
 import { useCartItems } from '@/hooks/cart/useCartItems';
 import useAuthStore from '@/stores/auth/useAuthStore';
 
+import { useOrderInsert } from '@/hooks/order/useOrderInsert';
 import useCartStore from '@/stores/cart/useCartStore';
+import {
+  OrderStatus,
+  PaymentMethod,
+  PaymentStatus,
+} from '@/types/dto/orderDTO';
+import { calculateQuantity, calculateTotalAmount } from '@/utils/cartUtil';
 import { useMemo } from 'react';
 import { OrderListComponent } from './components/OrderListItem';
-import { calculateTotalAmount } from '@/utils/calculateTotalAmount';
+
 const OrderPage = () => {
   const { selectedItems, setSelectedItems } = useCartStore();
+  const { mutate: orderMutate } = useOrderInsert();
   const { user } = useAuthStore();
   const { data } = useCartItems();
 
@@ -16,8 +24,24 @@ const OrderPage = () => {
     return data?.filter((item) => selectedItems.includes(item.id));
   }, [data, selectedItems]);
 
-  const handleOrderBtn = () => {};
-
+  const handleOrderBtn = () => {
+    if (!user?.id) {
+      console.error('로그인 정보가 없습니다.');
+      return;
+    }
+    const orderData = {
+      user_id: user.id,
+      total_price: calculateTotalAmount(filteredCartData, selectedItems) + 3000,
+      status: OrderStatus.주문완료,
+      payment_method: PaymentMethod.신용카드,
+      payment_status: PaymentStatus.결제완료,
+      shipping_recipient: user.id,
+      shipping_address: 'g',
+      shipping_phone: user.id,
+      quantity: calculateQuantity(selectedItems),
+    };
+    orderMutate(orderData);
+  };
   return (
     <div className="mt-6">
       <div className="  mx-4 py-4 border-t-[0.2rem] border-black">

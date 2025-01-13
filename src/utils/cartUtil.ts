@@ -13,3 +13,7 @@ export const calculateTotalAmount = (
     }, 0) || 0
   );
 };
+
+export const calculateQuantity = (selectedItems: string[]) => {
+  return selectedItems.length;
+};

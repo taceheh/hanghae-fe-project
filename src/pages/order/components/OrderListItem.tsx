@@ -1,14 +1,13 @@
 import { ICartWithProduct } from '@/types/dto/cartDTO';
-import { useEffect } from 'react';
 
 interface OrderListComponentProps {
   cart: ICartWithProduct; // ICartWithProduct에서 product만 사용
 }
 
 export const OrderListComponent = ({ cart }: OrderListComponentProps) => {
-  useEffect(() => {
-    console.log(cart);
-  }, []);
+  // useEffect(() => {
+  //   console.log(cart);
+  // }, []);
   return (
     <div className="mt-6 mb-3 text-sm flex items-center">
       <div
