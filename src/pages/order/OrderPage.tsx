@@ -2,7 +2,8 @@ import { Button } from '@/components/ui/button';
 import { useCartItems } from '@/hooks/cart/useCartItems';
 import useAuthStore from '@/stores/auth/useAuthStore';
 
-import { useOrderInsert } from '@/hooks/order/useOrderInsert';
+// import { useOrderInsert } from '@/hooks/order/useOrderInsert';
+// import { useOrderItemInsert } from '@/hooks/order/useOrderItemInsert';
 import useCartStore from '@/stores/cart/useCartStore';
 import {
   OrderStatus,
@@ -12,19 +13,30 @@ import {
 import { calculateQuantity, calculateTotalAmount } from '@/utils/cartUtil';
 import { useMemo } from 'react';
 import { OrderListComponent } from './components/OrderListItem';
+import {
+  useInsertOrder,
+  useCartDetails,
+  useInsertOrderItem,
+} from '@/hooks/order/useOrder';
+import { useNavigate } from 'react-router-dom';
 
 const OrderPage = () => {
   const { selectedItems, setSelectedItems } = useCartStore();
-  const { mutate: orderMutate } = useOrderInsert();
+  // const { mutate: orderMutate } = useOrderInsert();
+  // const { mutate: orderItemMutate } = useOrderItemInsert();
+  // const { data: orderItem } = useOrderItems(selectedItems);
+  const { data: cartDetails } = useCartDetails(selectedItems);
+  const { mutate: insertOrder } = useInsertOrder();
+  const { mutate: insertOrderItem } = useInsertOrderItem();
   const { user } = useAuthStore();
   const { data } = useCartItems();
-
+  const navigate = useNavigate();
   // selectedItems의 id와 data의 id가 일치하는 애들만 필터링 해줄건데
   const filteredCartData = useMemo(() => {
     return data?.filter((item) => selectedItems.includes(item.id));
   }, [data, selectedItems]);
 
-  const handleOrderBtn = () => {
+  const handleOrderBtn = async () => {
     if (!user?.id) {
       console.error('로그인 정보가 없습니다.');
       return;
@@ -41,7 +53,41 @@ const OrderPage = () => {
       shipping_phone: user.id,
       quantity: calculateQuantity(selectedItems),
     };
-    orderMutate({ orderData, cartId: selectedItems });
+    insertOrder(orderData, {
+      onSuccess: async (newOrder) => {
+        console.log('주문 삽입 성공:', newOrder);
+
+        const productData = cartDetails;
+        if (!productData || productData.length === 0) {
+          console.error('장바구니 데이터 없음');
+          return;
+        }
+        console.log(productData);
+        // const orderItemdata = productData.map((item) => ({
+        //   order_id: newOrder.id,
+        //   product_id: item.product_id,
+        //   price: item.price,
+        //   quantity: item.quantity,
+        // }));
+
+        console.log(newOrder);
+        insertOrderItem(
+          { productData, orderId: newOrder.id },
+          {
+            onSuccess: () => {
+              console.log('주문 항목 삽입 성공');
+              navigate('/order/receipt', { state: { isSuccess: true } });
+            },
+            onError: (error) => {
+              console.error('주문 항목 삽입 실패:', error);
+            },
+          }
+        );
+      },
+      onError: (error) => {
+        console.error('주문 삽입 실패:', error);
+      },
+    });
   };
   return (
     <div className="mt-6">
