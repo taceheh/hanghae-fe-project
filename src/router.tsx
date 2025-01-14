@@ -45,6 +45,11 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
       },
       {
+        path: pageRoutes.profile,
+        element: <ProfileEditPage />,
+        errorElement: <ErrorPage />,
+      },
+      {
         path: pageRoutes.order,
         element: <OrderPage />,
         errorElement: <ErrorPage />,
