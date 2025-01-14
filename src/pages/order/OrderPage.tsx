@@ -19,15 +19,17 @@ import {
   useInsertOrderItem,
 } from '@/hooks/order/useOrder';
 import { useNavigate } from 'react-router-dom';
+import { useCartDelete } from '@/hooks/cart/useCartDelete';
 
 const OrderPage = () => {
-  const { selectedItems, setSelectedItems } = useCartStore();
+  const { selectedItems, clearSelectedItems } = useCartStore();
   // const { mutate: orderMutate } = useOrderInsert();
   // const { mutate: orderItemMutate } = useOrderItemInsert();
   // const { data: orderItem } = useOrderItems(selectedItems);
   const { data: cartDetails } = useCartDetails(selectedItems);
   const { mutate: insertOrder } = useInsertOrder();
   const { mutate: insertOrderItem } = useInsertOrderItem();
+  const { mutate: deleteCart } = useCartDelete();
   const { user } = useAuthStore();
   const { data } = useCartItems();
   const navigate = useNavigate();
@@ -76,7 +78,12 @@ const OrderPage = () => {
           {
             onSuccess: () => {
               console.log('주문 항목 삽입 성공');
-              navigate('/order/receipt', { state: { isSuccess: true } });
+              deleteCart({ cartIds: selectedItems, userId: user.id });
+              clearSelectedItems();
+
+              navigate('/order/receipt', {
+                state: { isSuccess: true, orderId: newOrder.id },
+              });
             },
             onError: (error) => {
               console.error('주문 항목 삽입 실패:', error);

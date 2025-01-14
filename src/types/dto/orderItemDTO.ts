@@ -7,6 +7,7 @@ export interface IOrderItem {
   quantity: number; // 상품 수량
   created_at: string; // ISO 8601 형식의 날짜 문자열
 }
+
 export interface orderDetailProps {
   product_id: string;
   price: number;

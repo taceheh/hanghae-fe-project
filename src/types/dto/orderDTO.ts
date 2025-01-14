@@ -1,4 +1,6 @@
 // Order Table 타입
+import { IOrderItem } from './orderItemDTO';
+import { IProduct } from './productDTO';
 export interface IOrder {
   id: string;
   user_id: string;
@@ -31,4 +33,12 @@ export enum PaymentStatus {
 export enum PaymentMethod {
   신용카드 = '신용카드',
   간편결제 = '간편결제',
+}
+export interface IOrderItemWithProduct extends IOrderItem {
+  product?: IProduct; // Optional: 상품 정보가 있을 경우만 포함
+}
+
+// IOrder를 확장하여 orderItem 데이터를 포함
+export interface IOrderWithDetails extends IOrder {
+  orderItem: IOrderItemWithProduct[]; // 주문 항목 배열
 }

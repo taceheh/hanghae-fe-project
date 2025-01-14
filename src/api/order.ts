@@ -21,6 +21,7 @@ export const insertOrderItem = async (
   const { error } = await supabase.from('orderItem').insert(
     productData.map((item) => ({
       order_id: orderId,
+      product_id: item.product_id,
       price: item.price,
       quantity: item.quantity,
     }))
