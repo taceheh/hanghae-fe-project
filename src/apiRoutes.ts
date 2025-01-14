@@ -8,4 +8,5 @@ export const pageRoutes = {
   profile: '/mypage/profile',
   order: '/order',
   orderReceipt: '/order/receipt',
+  myHistory: '/myHistory',
 };

@@ -9,6 +9,8 @@ import ProductDetailPage from './pages/products/components/ProductDetail';
 import CartPage from './pages/carts/CartPage';
 import OrderPage from './pages/order/OrderPage';
 import OrderReceiptPage from './pages/order/OrderReceiptPage';
+import ProfileEditPage from './pages/mypage/ProfileEditPage';
+import OrderHistoryPage from './pages/order/OrderHistoryPage';
 
 const router = createBrowserRouter([
   {
@@ -57,6 +59,11 @@ const router = createBrowserRouter([
       {
         path: pageRoutes.orderReceipt,
         element: <OrderReceiptPage />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: pageRoutes.myHistory,
+        element: <OrderHistoryPage />,
         errorElement: <ErrorPage />,
       },
     ],
