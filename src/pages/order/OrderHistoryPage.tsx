@@ -59,7 +59,10 @@ const OrderHistoryPage = () => {
                     <div>
                       {order.total_price} / 수량 {order.quantity} 개
                     </div>
-                    <ReviewModal productId={item.product?.id} />
+                    <ReviewModal
+                      userId={order.user_id}
+                      productId={item.product?.id}
+                    />
                     <Button>주문취소</Button>
                   </div>
                   <div>
