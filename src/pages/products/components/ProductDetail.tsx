@@ -1,14 +1,8 @@
 import { useCartInsert } from '@/hooks/cart/useCartInsert';
-import { useInsertOrder, useInsertOrderItem } from '@/hooks/order/useOrder';
 import { useIsLiked } from '@/hooks/products/useIsLiked';
 import { useLike } from '@/hooks/products/useLike';
 import { useProductDetail } from '@/hooks/products/useProductDetail';
 import useAuthStore from '@/stores/auth/useAuthStore';
-import {
-  OrderStatus,
-  PaymentMethod,
-  PaymentStatus,
-} from '@/types/dto/orderDTO';
 import { useState } from 'react';
 import { BiHeart, BiSolidHeart } from 'react-icons/bi';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -25,8 +19,6 @@ const ProductDetailPage = () => {
   const { data: isLiked } = useIsLiked(productId!, userId!);
   const { mutate: likeMutate } = useLike(isLiked ?? false, productId!, userId!);
   const { mutate: cartMutate } = useCartInsert();
-  const { mutate: insertOrder } = useInsertOrder();
-  const { mutate: insertOrderItem } = useInsertOrderItem();
 
   // 기본 검증
   if (!productId || !userId) return <div>잘못된 요청입니다.</div>;
@@ -72,56 +64,6 @@ const ProductDetailPage = () => {
     });
   };
 
-  // const handlePurchase = () => {
-  //   const orderData = {
-  //     user_id: user.id,
-  //     total_price: (product?.price ?? 0) * count + 3000,
-  //     status: OrderStatus.주문완료,
-  //     payment_method: PaymentMethod.신용카드,
-  //     payment_status: PaymentStatus.결제완료,
-  //     shipping_recipient: user.id,
-  //     shipping_address: 'g',
-  //     shipping_phone: user.id,
-  //     quantity: count,
-  //   };
-  //   insertOrder(orderData, {
-  //     onSuccess: async (newOrder) => {
-  //       console.log('주문 삽입 성공:', newOrder);
-
-  //       if (!product?.id) {
-  //         console.error('유효한 상품 ID가 없습니다.');
-  //         return;
-  //       }
-  //       const productData = [
-  //         {
-  //           product_id: product?.id,
-  //           price: product?.price,
-  //           quantity: count,
-  //         },
-  //       ];
-
-  //       console.log(newOrder);
-  //       insertOrderItem(
-  //         { productData, orderId: newOrder.id },
-  //         {
-  //           onSuccess: () => {
-  //             console.log('주문 항목 삽입 성공');
-
-  //             navigate('/order/receipt', {
-  //               state: { isSuccess: true, orderId: newOrder.id },
-  //             });
-  //           },
-  //           onError: (error) => {
-  //             console.error('주문 항목 삽입 실패:', error);
-  //           },
-  //         }
-  //       );
-  //     },
-  //     onError: (error) => {
-  //       console.error('주문 삽입 실패:', error);
-  //     },
-  //   });
-  // };
   return (
     <>
       <div className="">
