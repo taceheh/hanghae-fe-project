@@ -20,7 +20,6 @@ export interface IOrder {
 export type OrderInsert = Omit<IOrder, 'id' | 'created_at'>;
 
 export enum OrderStatus {
-  주문대기 = '주문대기',
   주문완료 = '주문완료',
   주문취소 = '주문취소',
 }

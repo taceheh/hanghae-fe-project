@@ -10,10 +10,7 @@ export const OrderListComponent = ({ cart }: OrderListComponentProps) => {
   // }, []);
   return (
     <div className="mt-6 mb-3 text-sm flex items-center">
-      <div
-        className="mr-4
-      "
-      >
+      <div className="mr-4">
         <img className="w-20 h-20" src={cart.product.image_url} />
       </div>
       <div>
