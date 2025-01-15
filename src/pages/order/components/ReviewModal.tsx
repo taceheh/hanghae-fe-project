@@ -8,40 +8,38 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
-export function DialogDemo() {
+export const ReviewModal = ({ productId: string }) => {
+  const handleSaveReview = () => {};
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Edit Profile</Button>
+        <Button variant="outline">리뷰쓰기</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[500px] bg-white text-black">
         <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
+          <DialogTitle>리뷰 작성</DialogTitle>
           <DialogDescription>
-            Make changes to your profile here. Click save when you're done.
+            주문하신 상품에 대한 리뷰를 작성해주세요.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              Name
-            </Label>
-            <Input id="name" value="Pedro Duarte" className="col-span-3" />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="username" className="text-right">
-              Username
-            </Label>
-            <Input id="username" value="@peduarte" className="col-span-3" />
-          </div>
+          <Textarea
+            id="review"
+            placeholder="리뷰 내용을 작성해주세요"
+            className="col-span-3 w-50 h-40 resize-none"
+          />
         </div>
         <DialogFooter>
-          <Button type="submit">Save changes</Button>
+          <Button
+            className="bg-customBlack text-white rounded-none font-medium p-2  hover:text-pointColor"
+            onClick={handleSaveReview}
+          >
+            리뷰 저장
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
-}
+};

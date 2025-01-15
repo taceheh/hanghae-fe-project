@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useEffect } from 'react';
 import useAuthStore from '@/stores/auth/useAuthStore';
 import { formatISOToDate } from '@/utils/dateFormat';
+import { ReviewModal } from './components/ReviewModal';
 const fetchOrderDetails = async (
   userId: string
 ): Promise<IOrderWithDetails[]> => {
@@ -58,7 +59,8 @@ const OrderHistoryPage = () => {
                     <div>
                       {order.total_price} / 수량 {order.quantity} 개
                     </div>
-                    <Button>리뷰작성</Button> <Button>주문취소</Button>
+                    <ReviewModal productId={item.product?.id} />
+                    <Button>주문취소</Button>
                   </div>
                   <div>
                     <img className="w-20 h-20" src={item.product?.image_url} />
