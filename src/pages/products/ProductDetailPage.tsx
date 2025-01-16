@@ -17,16 +17,17 @@ const ProductDetailPage = () => {
   const [count, setCount] = useState(1);
 
   const { data: product, isLoading, error } = useProductDetail(productId!);
-  const { data: isLiked } = useIsLiked(productId!, userId!);
-  const { mutate: likeMutate } = useLike(isLiked ?? false, productId!, userId!);
+  const { data: isLiked } = isLogin ? useIsLiked(productId!, userId!) : {};
+  const { mutate: likeMutate } = isLogin
+    ? useLike(isLiked ?? false, productId!, userId!)
+    : { mutate: () => {} }; // 빈 함수로 처리
   const { mutate: cartMutate } = useCartInsert();
   const { data: reviews } = useGetReviews(productId!);
 
   // 기본 검증
-  if (!productId || !userId) return <div>잘못된 요청입니다.</div>;
+  if (!productId) return <div>잘못된 요청입니다.</div>;
   if (isLoading) return <div>로딩 중...</div>;
   if (error) return <div>에러가 발생했습니다: {error.message}</div>;
-  if (isLiked === undefined) return <div>좋아요 상태를 확인 중...</div>;
   console.log(reviews);
   // 상품 개수 갱신 함수
   const handleCountChange = (quantity: string) => {
