@@ -1,3 +1,5 @@
+![tastebean_logo](https://github.com/user-attachments/assets/da1358ad-6dfc-41f7-b84f-5f08d32e065a)
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
