@@ -1,8 +1,10 @@
 import { useCartInsert } from '@/hooks/cart/useCartInsert';
+import { useGetReviews } from '@/hooks/products/useGetReviews';
 import { useIsLiked } from '@/hooks/products/useIsLiked';
 import { useLike } from '@/hooks/products/useLike';
 import { useProductDetail } from '@/hooks/products/useProductDetail';
 import useAuthStore from '@/stores/auth/useAuthStore';
+import { formatISOToDate, formatName } from '@/utils/dateFormat';
 import { useState } from 'react';
 import { BiHeart, BiSolidHeart } from 'react-icons/bi';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -16,16 +18,18 @@ const ProductDetailPage = () => {
   const [count, setCount] = useState(1);
 
   const { data: product, isLoading, error } = useProductDetail(productId!);
-  const { data: isLiked } = useIsLiked(productId!, userId!);
-  const { mutate: likeMutate } = useLike(isLiked ?? false, productId!, userId!);
+  const { data: isLiked } = isLogin ? useIsLiked(productId!, userId!) : {};
+  const { mutate: likeMutate } = isLogin
+    ? useLike(isLiked ?? false, productId!, userId!)
+    : { mutate: () => {} }; // 빈 함수로 처리
   const { mutate: cartMutate } = useCartInsert();
+  const { data: reviews } = useGetReviews(productId!);
 
   // 기본 검증
-  if (!productId || !userId) return <div>잘못된 요청입니다.</div>;
+  if (!productId) return <div>잘못된 요청입니다.</div>;
   if (isLoading) return <div>로딩 중...</div>;
   if (error) return <div>에러가 발생했습니다: {error.message}</div>;
-  if (isLiked === undefined) return <div>좋아요 상태를 확인 중...</div>;
-
+  console.log(reviews);
   // 상품 개수 갱신 함수
   const handleCountChange = (quantity: string) => {
     setCount(Number(quantity));
@@ -47,6 +51,21 @@ const ProductDetailPage = () => {
     }
 
     likeMutate();
+  };
+  // ProductDetailPage.tsx
+  const handlePurchase = () => {
+    if (!product || !product.id) {
+      console.error('유효하지 않은 상품입니다.');
+      return;
+    }
+
+    navigate('/order', {
+      state: {
+        isDirectPurchase: true,
+        product: product,
+        count: count,
+      },
+    });
   };
 
   return (
@@ -110,15 +129,66 @@ const ProductDetailPage = () => {
         >
           장바구니 담기
         </button>
-        <button className="w-[240px] border text-xs border-solid bg-customBlack rounded-none text-white font-bold">
+        <button
+          className="w-[240px] border text-xs border-solid bg-customBlack rounded-none text-white font-bold"
+          onClick={handlePurchase}
+        >
           바로 구매하기
         </button>
       </div>
-      <div>
-        원산지 맛설명 상품설명
-        <div>{product?.description}</div>
+      <div className="mt-6 py-4 border-t-[1px] border-black">
+        <div className="font-semibold pb-4">상품정보 한 눈에 보기</div>
+        <div className=" mb-3 text-sm flex justify-between">
+          <div className="w-full">
+            <div className="flex border-t-[1px] py-2">
+              <div className="w-[20%]">원산지</div>
+              <div className="w-[80%]">{product?.origin}</div>
+            </div>
+            <div className="flex border-t-[1px] py-2">
+              <div className="w-[20%]">중량</div>
+              <div className="w-[80%]">{product?.weight}g</div>
+            </div>
+            <div className="flex border-y-[1px] py-2">
+              <div className="w-[20%]">원두 특징</div>
+              <div className="w-[80%]">{product?.flavor}</div>
+            </div>
+          </div>
+        </div>
+        <div className="font-semibold pt-8 pb-4">상품 정보 상세보기</div>
+        <div className="text-sm pb-10 flex border-b-[1px]">
+          {product?.description}
+        </div>
       </div>
-      <div className="p-4">리뷰요</div>
+      {reviews?.length === 0 ? (
+        <div className="my-10">
+          <div className="font-semibold">리뷰</div>
+          <div className="text-xs py-4">
+            이 상품의 첫번째 리뷰를 작성해보세요.
+            <br />
+            작성해주신 리뷰는 고객들에게 큰 도움이 됩니다.
+          </div>
+        </div>
+      ) : (
+        <div className="pb-10">
+          {/* TODO: ANY타입 고쳐야함 (타입생성해야할듯) */}
+          <div className="font-semibold my-6">
+            리뷰 ({reviews?.length}) ★★★★★
+          </div>
+          {reviews?.map((item: any) => (
+            <div key={item.id} className="py-2  border-b-[1px]">
+              <div className="flex justify-between mb-2">
+                <div className=" text-xs">
+                  ★★★★★ {formatName(item.users?.name)}
+                </div>{' '}
+                <div className=" text-xs">
+                  {formatISOToDate(item.created_at)}
+                </div>
+              </div>
+              <div className="text-sm">{item.comment}</div>
+            </div>
+          ))}
+        </div>
+      )}
     </>
   );
 };

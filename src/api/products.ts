@@ -100,3 +100,28 @@ export const updateLike = async (
       .insert({ product_id: productId, user_id: userId });
   }
 };
+
+// 상품 리뷰 데이터 가져오기
+export const fetchProductReviews = async (productId: string) => {
+  if (!productId) throw new Error('상품 ID가 유효하지 않습니다.');
+
+  const { data, error } = await supabase
+    .from('reviews')
+    .select(
+      `
+      id,
+      user_id,
+      comment,
+      created_at,
+      users (name)
+    `
+    )
+    .eq('product_id', productId);
+
+  if (error) {
+    console.error('리뷰 데이터를 가져오는 중 에러 발생:', error.message);
+    throw new Error(error.message);
+  }
+
+  return data;
+};

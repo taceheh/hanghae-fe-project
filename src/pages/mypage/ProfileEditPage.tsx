@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useEffect, useState } from 'react';
-import { Postcode } from './PostCode';
+import { Postcode } from './components/PostCode';
 import useAuthStore from '@/stores/auth/useAuthStore';
 import supabase from '@/supabase';
 

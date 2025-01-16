@@ -77,12 +77,12 @@ export const fetchCartWithProducts = async (
   return data;
 };
 
-export const deleteCartItem = async (cartId: string, userId: string) => {
+export const deleteCartItem = async (cartIds: string[], userId: string) => {
   const { data, error } = await supabase
     .from('cart')
     .delete()
     .eq('user_id', userId)
-    .eq('id', cartId);
+    .in('id', cartIds);
 
   if (error) {
     console.log('delete data error: ', error);

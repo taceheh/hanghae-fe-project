@@ -5,15 +5,16 @@ import { BiX } from 'react-icons/bi';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import useCartStore from '@/stores/cart/useCartStore';
+import { calculateTotalAmount } from '@/utils/cartUtil';
+import { useNavigate } from 'react-router-dom';
 
 const CartItemComponent = () => {
-  // const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const { selectedItems, setSelectedItems, clearSelectedItems } =
     useCartStore();
-  const { data, isLoading, isError } = useCartItems();
+  const { data: cartItems, isLoading, isError } = useCartItems();
   const { mutate: deleteCartItem } = useCartDelete();
   const { mutate: updateProductCount } = useCartUpdate();
-  // TODO: allSelected, totalAmount,itemCounts 상태관리를 꼭 해야되는지 고려해볼 것
+  const navigate = useNavigate();
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -24,13 +25,13 @@ const CartItemComponent = () => {
   }
 
   const isAllSelected =
-    selectedItems.length > 0 && selectedItems.length === data?.length;
+    selectedItems.length > 0 && selectedItems.length === cartItems?.length;
 
   const handleSelectAll = () => {
     if (isAllSelected) {
       clearSelectedItems();
     } else {
-      const cartIds = data?.map((item) => item.id) || [];
+      const cartIds = cartItems?.map((item) => item.id) || [];
       setSelectedItems(cartIds);
     }
   };
@@ -48,85 +49,106 @@ const CartItemComponent = () => {
     updateProductCount({ cartId: id, count: quantity });
   };
 
-  const calculateTotalAmount = () => {
-    return (
-      data?.reduce((sum, item) => {
-        if (selectedItems.includes(item.id)) {
-          return sum + Number(item.price) * item.quantity;
-        }
-        return sum;
-      }, 0) || 0
-    );
+  const handleDeleteCart = async (cartId: string, userId: string) => {
+    try {
+      deleteCartItem({ cartIds: [cartId], userId });
+      const newItems = selectedItems.filter((id) => id !== cartId);
+      setSelectedItems(newItems);
+    } catch (error) {
+      console.error('삭제 실패:', error);
+    }
   };
-
+  const navigateToHome = () => {
+    navigate('/');
+  };
   return (
     <>
-      <div className="">
-        <div className="px-4">
-          <Checkbox checked={isAllSelected} onCheckedChange={handleSelectAll} />{' '}
-          전체 선택
+      {!cartItems || cartItems.length === 0 ? (
+        <div className="text-center m-20">
+          <div className="font-semibold mb-2">
+            장바구니에 담긴 상품이 없어요
+          </div>
+          <div className="text-gray-400 font-semibold text-xs mb-8">
+            원하는 상품을 담아보세요
+          </div>
+          <Button
+            onClick={navigateToHome}
+            className="bg-customBlack text-white rounded-none font-medium text-xs p-2 w-[96%] hover:text-pointColor"
+          >
+            상품 보러 가기
+          </Button>
         </div>
-        {data?.map((cartItem) => {
-          if (!cartItem.product) return null; // product가 없는 경우 처리
-          return (
-            <div
-              key={cartItem.id}
-              className="flex align-baseline m-2 px-2 py-4 border-t-[0.2rem] border-black"
-            >
-              <div className="mr-3">
-                <Checkbox
-                  checked={selectedItems.includes(cartItem.id)}
-                  onCheckedChange={() => handleSelectItem(cartItem.id)}
-                />
-              </div>
-              <div className="h-[110px] mr-3">
-                <img
-                  className="h-[110px] w-[110px]"
-                  src={cartItem.product.image_url}
-                />
-              </div>
-              <div className="w-full">
-                <div className="flex justify-between w-full">
-                  <div>[스타벅스] {cartItem.product.name}</div>
-                  <BiX
-                    onClick={() =>
-                      deleteCartItem({
-                        cartId: cartItem.id,
-                        userId: cartItem.user_id,
-                      })
-                    }
-                    className="text-2xl text-gray-400 "
-                  />
-                </div>
-                <div>
-                  {cartItem.product.weight}g / {cartItem.quantity}개
-                </div>
-                <input
-                  className="p-2"
-                  type="number"
-                  value={cartItem.quantity}
-                  min={1}
-                  max={10}
-                  onChange={(e) =>
-                    handleCountChange(cartItem.id, Number(e.target.value))
-                  }
-                />
-                <div>
-                  {(Number(cartItem.price) * cartItem.quantity).toLocaleString(
-                    'ko-KR'
-                  )}
-                  원
-                </div>
-              </div>
+      ) : (
+        <>
+          <div className="">
+            <div className="px-4">
+              <Checkbox
+                checked={isAllSelected}
+                onCheckedChange={handleSelectAll}
+              />{' '}
+              전체 선택
             </div>
-          );
-        })}
-      </div>
-      <div className="p-4 flex justify-center align-middle bg-gray-100">
-        <Button className="bg-customBlack text-white rounded-none font-medium text-xs p-2 w-[96%] hover:text-pointColor">
-          {calculateTotalAmount()}원 구매하기
-        </Button>
-      </div>
+            {cartItems?.map((item) => {
+              if (!item.product) return null; // product가 없는 경우 처리
+              return (
+                <div
+                  key={item.id}
+                  className="flex align-baseline m-2 px-2 py-4 border-t-[0.2rem] border-black"
+                >
+                  <div className="mr-3">
+                    <Checkbox
+                      checked={selectedItems.includes(item.id)}
+                      onCheckedChange={() => handleSelectItem(item.id)}
+                    />
+                  </div>
+                  <div className="h-[110px] mr-3">
+                    <img
+                      className="h-[110px] w-[110px]"
+                      src={item.product.image_url}
+                    />
+                  </div>
+                  <div className="w-full">
+                    <div className="flex justify-between w-full">
+                      <div>[스타벅스] {item.product.name}</div>
+                      <BiX
+                        onClick={() => handleDeleteCart(item.id, item.user_id)}
+                        className="text-2xl text-gray-400 "
+                      />
+                    </div>
+                    <div>
+                      {item.product.weight}g / {item.quantity}개
+                    </div>
+                    <input
+                      className="p-2"
+                      type="number"
+                      value={item.quantity}
+                      min={1}
+                      max={10}
+                      onChange={(e) =>
+                        handleCountChange(item.id, Number(e.target.value))
+                      }
+                    />
+                    <div>
+                      {(Number(item.price) * item.quantity).toLocaleString(
+                        'ko-KR'
+                      )}
+                      원
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="p-4 flex justify-center align-middle bg-gray-100">
+            <Button
+              onClick={() => navigate('/order')}
+              className="bg-customBlack text-white rounded-none font-medium text-xs p-2 w-[96%] hover:text-pointColor"
+            >
+              {calculateTotalAmount(cartItems, selectedItems)}원 구매하기
+            </Button>
+          </div>
+        </>
+      )}
     </>
   );
 };

@@ -3,8 +3,9 @@ import useAuthStore from '@/stores/auth/useAuthStore';
 import { useNavigate } from 'react-router-dom';
 
 const Mypage = () => {
-  const { isLogin } = useAuthStore();
+  const { isLogin, logout } = useAuthStore();
   const navigate = useNavigate();
+  const navigateEditPage = () => navigate('/mypage/profile');
   if (!isLogin) {
     // 로그인되지 않은 경우
     return (
@@ -41,11 +42,10 @@ const Mypage = () => {
 
       <div className="border-t border-gray-300"></div>
       <div className="py-8 px-16">
-        <div className="pb-8">로그아웃</div>
-        <div
-          className="pb-8 cursor-pointer"
-          onClick={() => navigate('/mypage/profile')}
-        >
+        <div className="pb-8" onClick={logout}>
+          로그아웃
+        </div>
+        <div className="pb-8 cursor-pointer" onClick={navigateEditPage}>
           회원정보 수정
         </div>
 
