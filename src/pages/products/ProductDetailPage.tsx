@@ -1,4 +1,5 @@
 import { useCartInsert } from '@/hooks/cart/useCartInsert';
+import { useGetReviews } from '@/hooks/products/useGetReviews';
 import { useIsLiked } from '@/hooks/products/useIsLiked';
 import { useLike } from '@/hooks/products/useLike';
 import { useProductDetail } from '@/hooks/products/useProductDetail';
@@ -19,13 +20,14 @@ const ProductDetailPage = () => {
   const { data: isLiked } = useIsLiked(productId!, userId!);
   const { mutate: likeMutate } = useLike(isLiked ?? false, productId!, userId!);
   const { mutate: cartMutate } = useCartInsert();
+  const { data: reviews } = useGetReviews(productId!);
 
   // 기본 검증
   if (!productId || !userId) return <div>잘못된 요청입니다.</div>;
   if (isLoading) return <div>로딩 중...</div>;
   if (error) return <div>에러가 발생했습니다: {error.message}</div>;
   if (isLiked === undefined) return <div>좋아요 상태를 확인 중...</div>;
-
+  console.log(reviews);
   // 상품 개수 갱신 함수
   const handleCountChange = (quantity: string) => {
     setCount(Number(quantity));
@@ -137,6 +139,16 @@ const ProductDetailPage = () => {
         <div>{product?.description}</div>
       </div>
       <div className="p-4">리뷰요</div>
+      {/* TODO: ANY타입 고쳐야함 (타입생성해야할듯) */}
+      {reviews?.map((item: any) => (
+        <div>
+          <div>
+            <div>{item.users?.name}</div>
+            <div>{item.comment}</div>
+            <div>{item.created_at}</div>
+          </div>
+        </div>
+      ))}
     </>
   );
 };

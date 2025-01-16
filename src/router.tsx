@@ -5,12 +5,12 @@ import ErrorPage from './pages/error/components/ErrorPage';
 import LoginPage from './pages/login/LoginPage';
 import ProductPage from './pages/products/ProductPage';
 import Mypage from './pages/mypage/Mypage';
-import ProductDetailPage from './pages/products/components/ProductDetail';
 import CartPage from './pages/carts/CartPage';
 import OrderPage from './pages/order/OrderPage';
 import OrderReceiptPage from './pages/order/OrderReceiptPage';
 import ProfileEditPage from './pages/mypage/ProfileEditPage';
 import OrderHistoryPage from './pages/order/OrderHistoryPage';
+import ProductDetailPage from './pages/products/ProductDetailPage';
 
 const router = createBrowserRouter([
   {
