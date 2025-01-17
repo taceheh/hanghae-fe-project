@@ -3,9 +3,10 @@ import useAuthStore from '@/stores/auth/useAuthStore';
 import { useNavigate } from 'react-router-dom';
 
 const Mypage = () => {
-  const { isLogin, logout } = useAuthStore();
+  const { user, isLogin, logout } = useAuthStore();
   const navigate = useNavigate();
   const navigateEditPage = () => navigate('/mypage/profile');
+  const navigateHistoryPage = () => navigate('/myHistory');
   if (!isLogin) {
     // 로그인되지 않은 경우
     return (
@@ -30,18 +31,20 @@ const Mypage = () => {
   return (
     <div className="relative bg-white min-h-[calc(100vh-60px)]">
       {/* <h1 className="text-4xl font-bold">Welcome to your MyPage!</h1> */}
-      <div className=" pt-16 px-16 pb-8">
-        <div className="text-2xl font-bold">홍길동님</div>
-        <div className="text-sm">0 month plan 구독중</div>
+      <div className=" pt-16 px-8 pb-8">
+        <div className="text-2xl font-bold">{user?.name}님</div>
+        <div className="text-sm">구독중인 플랜이 없어요!</div>
       </div>
       <div className="border-t border-gray-300"></div>
-      <div className="py-8 px-16">
-        <div className="pb-8">주문내역</div>
+      <div className="p-8">
+        <div className="pb-8 cursor-pointer" onClick={navigateHistoryPage}>
+          주문내역
+        </div>
         <div>구독 정보 관리</div>
       </div>
 
       <div className="border-t border-gray-300"></div>
-      <div className="py-8 px-16">
+      <div className="p-8">
         <div className="pb-8" onClick={logout}>
           로그아웃
         </div>
