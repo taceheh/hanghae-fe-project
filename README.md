@@ -4,6 +4,7 @@
 <center>취향에 맞는 원두를 정기 구독하거나 개별 구매할 수 있는 
 <center>커머스 플랫폼
   
+  <br/><br/>
   
 ## ⚙️기술 스택
 **Language & Framework**
@@ -30,6 +31,7 @@
 
 <img  src="https://img.shields.io/badge/Prettier-F7B93E?style=for-the-badge&logo=Prettier&logoColor=white">
     
+<br/><br/>
      
 ## 💡기술적 의사결정
 - ### **TypeScript**
@@ -152,6 +154,7 @@
 	#### 도입 결과
 	Tailwind CSS와의 호환성으로 유연하고 간결한 UI 컴포넌트 구현
   
+  <br/><br/>
   
 ## 💡주요 기능 
  **☑️유저 관리**
@@ -159,6 +162,7 @@
 -  **로그인 상태관리**: 로그인한 사용자의 정보 전역 상태관리
 <img src="https://github.com/user-attachments/assets/3b1a5728-3424-4b93-b559-a63bf2f81f62" width="400" height="480"/>
   
+  <br/>
 
 **☑️상품 정보 공유 및 리뷰**
 - **상품 정보 및 통계 제공**: 상품 정보, 좋아요 개수, 리뷰 개수 등을 표시
@@ -176,18 +180,21 @@
 </figuration>
 </figure>
   
+  <br/>
 
 **☑️장바구니**
 - **수량 및 옵션 변경**: 장바구니에서 선택한 상품의 수량을 쉽게 수정 가능
 - **전체 상품 관리**: 장바구니 내 상품을 삭제하거나 선택적으로 구매 가능
 <img src="https://github.com/user-attachments/assets/60d49dcc-2269-4dfe-905f-b17a69bc19d2" width="400" height="480"/>
   
+  <br/>
 
 **☑️상품 결제**
 - **다양한 결제 수단 지원**: 신용카드, 간편 결제 등 다양한 결제 수단 제공(예정.....)
 - **결제 내역 확인**: 구매 완료 후 결제 내역을 즉시 확인 가능
 <img src="https://github.com/user-attachments/assets/60d49dcc-2269-4dfe-905f-b17a69bc19d2" width="400" height="480"/>
 
+<br/>
   
  **☑️마이페이지**
 -   **사용자 정보 수정**:  Daum 우편번호 API를 사용하여 배송지 저장
@@ -200,11 +207,12 @@
 </figuration>
 </figure>
   
+  <br/><br/>
   
 ## 🖥️API 명세서
 
 
-
+<br/><br/>
 
 ## 📈성능 최적화
 
@@ -242,6 +250,7 @@ const { ref } = useInView({
 });
 ```
   
+  <br/><br/>
     
 ## 🎯트러블 슈팅
 
@@ -293,8 +302,7 @@ queryClient.setQueryData(['product', productId], (oldData: any) => {
 queryClient.setQueryData(['isLiked', productId, userId], !isLiked);
 ```
   
-  
-
+  <br/><br/>
 
 ## 📁아키텍처
 
