@@ -161,8 +161,10 @@
 -   **Google 로그인**: Google 계정을 통한 간편 로그인.
 -  **로그인 상태관리**: 로그인한 사용자의 정보 전역 상태관리
 <img src="https://github.com/user-attachments/assets/3b1a5728-3424-4b93-b559-a63bf2f81f62" width="400" height="480"/>
-  
-  <br/>
+
+
+<br/><br/>
+
 
 **☑️상품 정보 공유 및 리뷰**
 - **상품 정보 및 통계 제공**: 상품 정보, 좋아요 개수, 리뷰 개수 등을 표시
@@ -179,23 +181,29 @@
 <img src="https://github.com/user-attachments/assets/5381cfff-3aa4-4bcd-a6cd-897d4168f9ef" width="400" height="480"/>
 </figuration>
 </figure>
-  
-  <br/>
+
+
+<br/><br/>
+
 
 **☑️장바구니**
 - **수량 및 옵션 변경**: 장바구니에서 선택한 상품의 수량을 쉽게 수정 가능
 - **전체 상품 관리**: 장바구니 내 상품을 삭제하거나 선택적으로 구매 가능
 <img src="https://github.com/user-attachments/assets/60d49dcc-2269-4dfe-905f-b17a69bc19d2" width="400" height="480"/>
-  
-  <br/>
+
+
+<br/>
+
 
 **☑️상품 결제**
 - **다양한 결제 수단 지원**: 신용카드, 간편 결제 등 다양한 결제 수단 제공(예정.....)
 - **결제 내역 확인**: 구매 완료 후 결제 내역을 즉시 확인 가능
 <img src="https://github.com/user-attachments/assets/60d49dcc-2269-4dfe-905f-b17a69bc19d2" width="400" height="480"/>
 
+
 <br/>
-  
+
+
  **☑️마이페이지**
 -   **사용자 정보 수정**:  Daum 우편번호 API를 사용하여 배송지 저장
 -  **주문내역**: 이전 주문내역 및 주문 상세 정보 열람
