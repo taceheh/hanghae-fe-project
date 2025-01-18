@@ -10,14 +10,14 @@ const Mypage = () => {
   if (!isLogin) {
     // 로그인되지 않은 경우
     return (
-      <div className="relative bg-coffee-background bg-cover bg-center min-h-[calc(100vh-60px)] flex flex-col items-center justify-center gap-6">
-        {/* 헤더 텍스트 */}
-        <div className="text-gray-200 text-4xl font-bold drop-shadow-md">
-          로그인
-        </div>
+      // bg-coffee-background bg-cover
+      <div
+        className="relative
+        bg-center mt-48 flex flex-col items-center justify-center gap-6"
+      >
+        <div className="text-customBlack text-4xl font-bold ">로그인</div>
 
-        {/* 로그인 설명 */}
-        <p className="text-gray-300 text-center text-lg max-w-md">
+        <p className="text-customBlack text-center text-lg max-w-md">
           간단한 로그인을 통해 테이스트빈을 이용해보세요.
         </p>
 
