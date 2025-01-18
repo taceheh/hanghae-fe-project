@@ -22,7 +22,7 @@ const ProductDetailPage = () => {
   const { data: product, isLoading, error } = useProductDetail(productId!);
   const { data: isLiked } = isLogin ? useIsLiked(productId!, userId!) : {};
   const { mutate: likeMutate } = isLogin
-    ? useLike(isLiked ?? false, productId!, userId!)
+    ? useLike(user?.id!)
     : { mutate: () => {} }; // 빈 함수로 처리
   const { mutate: cartMutate } = useCartInsert();
   const { data: reviews } = useGetReviews(productId!);
@@ -59,7 +59,11 @@ const ProductDetailPage = () => {
       return;
     }
 
-    likeMutate();
+    likeMutate({
+      productId: productId!,
+      isLiked: isLiked ?? false,
+      userId: userId!,
+    });
   };
   // ProductDetailPage.tsx
   const handlePurchase = () => {

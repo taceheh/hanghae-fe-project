@@ -1,23 +1,42 @@
 import supabase from '@/supabase';
 import { ProductResponse } from '@/types/dto/productDTO';
-import { PostgrestSingleResponse } from '@supabase/supabase-js';
 
 // 상품 리스트 가져오기
-export const fetchProduct = async (page: number): Promise<ProductResponse> => {
+export const fetchProduct = async (
+  page: number,
+  userId: string
+): Promise<ProductResponse> => {
   const pageSize = 10;
   const start = (page - 1) * pageSize;
   const end = start + pageSize - 1;
   const { data, count, error } = await supabase
     .from('products')
-    .select('*', { count: 'exact' })
+    .select('*, likes(user_id, product_id), reviews(user_id)', {
+      count: 'exact',
+    })
     .range(start, end);
+  console.log(data);
 
   if (error) {
     console.error('Error fetching products:', error.message);
     return { data: [], totalCount: 0, page };
   }
+
+  const processedData = (data || []).map((product) => {
+    const likes = product.likes || [];
+    const reviews = product.reviews || [];
+
+    return {
+      ...product,
+      isLiked: likes.some(
+        (like: { user_id: string }) => like.user_id === userId
+      ),
+      likeCount: likes.length,
+      reviewCount: reviews.length, // 리뷰 개수
+    };
+  });
   return {
-    data: data || [],
+    data: processedData || [],
     totalCount: count || 0,
     page,
   };

@@ -1,56 +1,46 @@
 import { useProducts } from '@/hooks/products/useProducts';
-import { IProduct } from '@/types/dto/productDTO';
+import { IProduct, ProductRelatedData } from '@/types/dto/productDTO';
 import { useEffect, useState } from 'react';
 import useAuthStore from '@/stores/auth/useAuthStore';
 import supabase from '@/supabase';
 import { BiHeart, BiSolidCommentDetail, BiSolidHeart } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
+import { useIsLiked } from '@/hooks/products/useIsLiked';
+import { useLike } from '@/hooks/products/useLike';
 
 const ProductCardComponent = () => {
   const navigate = useNavigate();
-  const [isLiked, setIsLiked] = useState<Record<string, boolean>>({});
+  const { user, isLogin } = useAuthStore();
+  // const { data: isLiked } = isLogin ? useIsLiked(productId!, userId!) : {};
+  const { mutate: likeMutate } = useLike(user?.id!);
+
   const { ref, inView } = useInView();
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useProducts();
-  // const { user, isLogin } = useAuthStore();
-  // const handleLikeBtn = async (productId: string) => {
-  //   if (isLogin) {
-  //     if (isLiked) {
-  //       const { error } = await supabase
-  //         .from('likes')
-  //         .delete()
-  //         .eq('user_id', user?.id)
-  //         .eq('product_id', productId);
-  //       if (error) console.log('좋아요 실패 : ', error);
-  //       setIsLiked(!isLiked);
-  //       console.log('좋아요 취소');
-  //     } else {
-  //       const { error } = await supabase.from('likes').insert({
-  //         user_id: user?.id,
-  //         product_id: productId,
-  //       });
-  //       if (error) console.log('좋아요 실패 : ', error);
-  //       setIsLiked(!isLiked);
-  //       console.log('좋아요 등록');
-  //     }
-  //   } else {
-  //     navigate('/login');
-  //   }
-  // };
-  const handleLikeBtn = (productId: string) => {};
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useProducts(
+    user?.id!
+  );
+
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
+    console.log(data);
   }, [inView, hasNextPage, isFetchingNextPage]);
 
+  const handleLikeToggle = (productId: string, isLiked: boolean) => {
+    if (!isLogin) {
+      navigate('/login'); // 로그인 페이지로 이동
+      return;
+    }
+
+    likeMutate({ productId, isLiked, userId: user?.id! });
+  };
   return (
     <div className="flex flex-wrap justify-between">
       {' '}
       {/* 기존 UI의 Flexbox 유지 */}
       {data?.pages.map((page) =>
-        page.data.map((item: IProduct) => (
+        page.data.map((item: ProductRelatedData) => (
           <div
             onClick={() => navigate(`product/${item.id}`)}
             className="w-[48%] mb-3 relative" // 기존 CSS 클래스 유지
@@ -62,13 +52,24 @@ const ProductCardComponent = () => {
               className="w-full h-[290px]" // 기존 이미지 스타일 유지
               loading="lazy" // Lazy Loading 적용
             />
-            <BiHeart
-              onClick={(e) => {
-                handleLikeBtn(item?.id);
-                e.stopPropagation(); // 이벤트 버블링 방지
-              }}
-              className="absolute bottom-[8.5rem] right-2 text-2xl text-white z-50 cursor-pointer"
-            />
+            {item.isLiked ? (
+              <BiSolidHeart
+                onClick={(e) => {
+                  handleLikeToggle(item.id, item.isLiked);
+                  e.stopPropagation();
+                }}
+                className="absolute bottom-[8.5rem] right-2 text-2xl text-pointColor z-50 cursor-pointer"
+              />
+            ) : (
+              <BiHeart
+                onClick={(e) => {
+                  handleLikeToggle(item.id, item.isLiked);
+                  e.stopPropagation();
+                }}
+                className="absolute bottom-[8.5rem] right-2 text-2xl text-white z-50 cursor-pointer"
+              />
+            )}
+
             <div className="pt-3">{item.name}</div>
             <div className="font-medium mt-1">{item.price}원</div>
             {item.flavor === '고소함' ? (
@@ -83,10 +84,10 @@ const ProductCardComponent = () => {
 
             <div className="flex items-center text-xs text-gray-400 font-medium py-3">
               <div className="pr-2">
-                <BiSolidHeart className="inline " /> 0
+                <BiSolidHeart className="inline " /> {item.likeCount}
               </div>
               <div>
-                <BiSolidCommentDetail className="inline" /> 0
+                <BiSolidCommentDetail className="inline" /> {item.reviewCount}
               </div>
             </div>
           </div>
