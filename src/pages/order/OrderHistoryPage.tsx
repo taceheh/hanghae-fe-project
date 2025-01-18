@@ -1,9 +1,7 @@
-import { useLocation, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import supabase from '@/supabase';
 import { IOrderWithDetails } from '@/types/dto/orderDTO';
 import { Button } from '@/components/ui/button';
-import { useEffect } from 'react';
 import useAuthStore from '@/stores/auth/useAuthStore';
 import { formatISOToDate } from '@/utils/dateFormat';
 import { ReviewModal } from './components/ReviewModal';
@@ -57,13 +55,15 @@ const OrderHistoryPage = () => {
                     <div className="font-semibold mb-2">스타벅스</div>
                     <div className="mb-2">{item.product?.name}</div>
                     <div>
-                      {order.total_price} / 수량 {order.quantity} 개
+                      {order.total_price} / 수량 {item.quantity} 개
                     </div>
-                    <ReviewModal
-                      userId={order.user_id}
-                      productId={item.product?.id}
-                    />
-                    <Button>주문취소</Button>
+                    <div className="mt-1">
+                      <ReviewModal
+                        userId={order.user_id}
+                        productId={item.product?.id}
+                      />
+                      <Button>주문취소</Button>
+                    </div>
                   </div>
                   <div>
                     <img className="w-20 h-20" src={item.product?.image_url} />

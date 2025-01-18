@@ -14,7 +14,8 @@ const Header = () => {
   const goToMyPage = () => {
     navigate('/mypage');
   };
-  const totalCartCount = data?.length;
+  const totalCartCount = data?.length || 0;
+
   return (
     <div className=" h-[60px] bg-transparent w-[600px] m-0 p-4 flex items-center justify-between bg-gray-100">
       <img

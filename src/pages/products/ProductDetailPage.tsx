@@ -8,6 +8,7 @@ import { formatISOToDate, formatName } from '@/utils/dateFormat';
 import { useState } from 'react';
 import { BiHeart, BiSolidHeart } from 'react-icons/bi';
 import { useNavigate, useParams } from 'react-router-dom';
+import CartModal from './components/CartModal';
 
 const ProductDetailPage = () => {
   const { id: productId } = useParams<{ id: string }>();
@@ -16,11 +17,12 @@ const ProductDetailPage = () => {
 
   const userId = user?.id;
   const [count, setCount] = useState(1);
+  const [isCartModalOpen, setCartModalOpen] = useState(false);
 
   const { data: product, isLoading, error } = useProductDetail(productId!);
   const { data: isLiked } = isLogin ? useIsLiked(productId!, userId!) : {};
   const { mutate: likeMutate } = isLogin
-    ? useLike(isLiked ?? false, productId!, userId!)
+    ? useLike(user?.id!)
     : { mutate: () => {} }; // 빈 함수로 처리
   const { mutate: cartMutate } = useCartInsert();
   const { data: reviews } = useGetReviews(productId!);
@@ -41,7 +43,14 @@ const ProductDetailPage = () => {
       console.error('유효한 사용자 또는 상품 정보가 없습니다.');
       return;
     }
-    cartMutate({ userId: user?.id, product, count });
+    cartMutate(
+      { userId: user?.id, product, count },
+      {
+        onSuccess: () => {
+          setCartModalOpen(true);
+        },
+      }
+    );
   };
 
   const handleLikeToggle = () => {
@@ -50,7 +59,11 @@ const ProductDetailPage = () => {
       return;
     }
 
-    likeMutate();
+    likeMutate({
+      productId: productId!,
+      isLiked: isLiked ?? false,
+      userId: userId!,
+    });
   };
   // ProductDetailPage.tsx
   const handlePurchase = () => {
@@ -70,6 +83,10 @@ const ProductDetailPage = () => {
 
   return (
     <>
+      <CartModal
+        isOpen={isCartModalOpen}
+        onClose={() => setCartModalOpen(false)}
+      />
       <div className="">
         <img
           // className="border border-emerald-50 w-[50%] g-50%]"
