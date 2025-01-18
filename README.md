@@ -1,4 +1,5 @@
 
+
 # ![tastebean_logo](https://github.com/user-attachments/assets/da1358ad-6dfc-41f7-b84f-5f08d32e065a)
 ![Cover](https://github.com/user-attachments/assets/105486f9-95e0-443e-b57e-19fdab241653)
 <center>취향에 맞는 원두를 정기 구독하거나 개별 구매할 수 있는 
@@ -29,7 +30,7 @@
 
 **Code Style**
 
-<img  src="https://img.shields.io/badge/Prettier-F7B93E?style=for-the-badge&logo=Prettier&logoColor=white">
+<img  src="https://img.shields.io/badge/Prettier-F7B93E?style=for-the-badge&logo=Prettier&logoColor=white"> <img  src="https://img.shields.io/badge/esLint-4B32C3?style=for-the-badge&logo=esLint&logoColor=white">
     
 <br/><br/>
      
@@ -37,22 +38,11 @@
 - ### **TypeScript**
 	#### 도입 배경
 	JavaScript로 개발을 시작했으나 컴포넌트와 API가 많아지면서 데이터가 undefined로 나오는 문제가 빈번하게 발생
-
-	<details>
-	<summary><b>기술 선정 과정</b></summary>
-
-	- **JavaScript**: 초기 진입장벽은 낮으나 타입 안정성이 부족하여 유지보수가 어려움
-	- **TypeScript**:
-	  1. **정적 타입**: 런타임 에러를 줄이고 코드 안정성 확보
-	  2. **IDE 지원**: 자동완성과 타입 추론으로 생산성 향상
-	  3. **협업 효율성**: 코드 가독성이 좋아 대규모 프로젝트에서 유지보수가 쉬움
-
-	</details>
-
+	
 	#### 도입 결과
-	타입 추론을 코드 작성 단계에서 하기 때문에 런타임에 발생할 수 있는 에러를 사전 차단
+	타입 추론을 코드 작성 단계에서 하기 때문에 런타임에 발생할 수 있는 에러를 사전 차단. API 응답 타입을 정의함으로써 데이터 구조를 명확히 파악. 타입을 명시적으로 정의함으로써 코드의 가독성과 유지보수성이 크게 향상. 
 
----
+<hr/>
 
 - ### **React Query**
 	#### 도입 배경
@@ -61,7 +51,7 @@
 	<details>
 	<summary><b>기술 선정 과정</b></summary>
 
-	- **Redux**: 상태를 전역으로 관리할 수 있지만 서버 데이터 관리에는 적합하지 않고 보일러 플레이트 코드가 많아 제외
+	- **Redux-Toolkit**: 상태를 전역으로 관리할 수 있지만 서버 데이터 관리에는 적합하지 않고 비동기 코드를 작성할 때  보일러 플레이트 코드가 많아 상대적으로 복잡하기 때문에  제외
 	- **React Query**:
 	  1. **서버 상태 관리에 최적화**: 서버와 클라이언트 상태를 분리하여 효율적으로 관리
 	  2. **비동기 처리 간소화**: 로딩, 에러 상태를 내장된 기능으로 쉽게 관리
@@ -73,7 +63,7 @@
 	#### 도입 결과
 	`useQuery`와 `useMutation`으로 데이터 관리 간소화, 중복 요청 제거, 캐싱을 통한 성능 최적화를 달성.
 
----
+<hr/>
 
 - ### **Zustand**
 	#### 도입 배경
@@ -93,7 +83,7 @@
 	#### 도입 결과
 	Redux 대비 간단하고 효율적인 상태 관리 구현.
 
----
+<hr/>
 
 - ### **Supabase**
 	#### 도입 배경
@@ -114,7 +104,7 @@
 	#### 도입 결과
 	SQL 쿼리를 활용해 유연한 데이터 관리가 가능해졌으며 인증 및 실시간 데이터 동기화를 통해 사용자 경험을 향상
 
----
+<hr/>
 
 - ### **Tailwind CSS**
 	#### 도입 배경
@@ -134,7 +124,7 @@
 	#### 도입 결과
 	**디자인 일관성 확보**, **빠른 스타일링**으로 개발 속도와 유지보수 효율성 개선
 
----
+<hr/>
 
 - ### **shadcn/ui**
 	#### 도입 배경
@@ -158,8 +148,7 @@
   
 ## 💡주요 기능 
  **☑️유저 관리**
--   **Google 로그인**: Google 계정을 통한 간편 로그인.
--  **로그인 상태관리**: 로그인한 사용자의 정보 전역 상태관리
+-   **Google 로그인**: Google 계정을 통한 간편 로그인
 <img src="https://github.com/user-attachments/assets/3b1a5728-3424-4b93-b559-a63bf2f81f62" width="400" height="480"/>
 
 
@@ -168,7 +157,6 @@
 
 **☑️상품 정보 공유 및 리뷰**
 - **상품 정보 및 통계 제공**: 상품 정보, 좋아요 개수, 리뷰 개수 등을 표시
-- **무한 스크롤**: 스크롤할 때 추가 상품 데이터를 자동으로 로드
 - **장바구니 추가** : 관심 있는 상품을 장바구니에 저장 가능
 - **바로 구매**: 원하는 상품을 즉시 결제하여 빠르게 구매 가능
 - **좋아요 기능**: 상품 정보에 좋아요를 눌러 선호도를 표시
@@ -312,37 +300,28 @@ queryClient.setQueryData(['isLiked', productId, userId], !isLiked);
   
   <br/><br/>
 
-## 📁아키텍처
+## 📁폴더구조
 
     📁  src
-	┣ 📁  api
-	┣ 📁 assets
-	┣ 📁 fonts
-	┣ 📁 components
+	┣ 📁 api (서버와 통신하는 함수들을 관리)
+	┣ 📁 assets (이미지, 아이콘, 동영상 등의 정적 자원을 관리)
+	┣ 📁 components (재사용 가능한 React 컴포넌트를 관리)
 	┃	  ┗📁 ui
-	┣ 📁 hooks
+	┣ 📁 hooks (React 커스텀 훅을 관리)
 	┃ 	  ┣ 📁 auth
 	┃    ┣ 📁 cart
-	┃    ┣ 📁 mypage
-	┃    ┣ 📁 order
-	┃    ┗ 📁 products
-	┣ 📁 lib
-	┣ 📁 pages
+	┃    	   ... 
+	┣ 📁 lib (외부 라이브러리와 관련된 초기화 및 설정 로직 관리)
+	┣ 📁 pages (각 라우트에 대응하는 페이지 컴포넌트 관리)
 	┃    ┣ 📁 carts
 	┃    ┣ 📁 common
-	┃    ┣ 📁 error
-	┃    ┣ 📁 loading
-	┃    ┣ 📁 login
-	┃    ┣ 📁 mypage
-	┃    ┣ 📁 order
-	┃    ┣ 📁 products
-	┃    ┗ 📁 subscriptions
-	┣ 📁 stores
+	┃    	   ... 
+	┣ 📁 stores (전역 상태 관리 관련 코드)
 	┃    ┣ 📁 auth
 	┃    ┣ 📁 cart
-	┣ 📁 types
+	┣ 📁 types (TypeScript 타입 정의 파일을 관리)
 	┃    ┣ 📁 dto
-	┗ 📁 utils
+	┗ 📁 utils (공통 함수와 유틸리티)
 
 
 
