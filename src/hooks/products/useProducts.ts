@@ -2,10 +2,10 @@ import { fetchProduct } from '@/api/products';
 // import { ProductResponse } from '@/types/dto/productDTO';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
-export const useProducts = () => {
+export const useProducts = (userId: string) => {
   return useInfiniteQuery({
     queryKey: ['products'],
-    queryFn: ({ pageParam }) => fetchProduct(pageParam),
+    queryFn: ({ pageParam }) => fetchProduct(pageParam, userId),
     getNextPageParam: (last) => {
       //last에 담겨있는 것은?
       if (last.data.length === 0) {
