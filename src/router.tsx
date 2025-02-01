@@ -2,15 +2,20 @@ import { createBrowserRouter } from 'react-router-dom';
 import { pageRoutes } from './apiRoutes';
 import CommonLayout from './pages/common/components/CommonLayout';
 import ErrorPage from './pages/error/components/ErrorPage';
-import LoginPage from './pages/login/LoginPage';
-import ProductPage from './pages/products/ProductPage';
-import Mypage from './pages/mypage/Mypage';
-import CartPage from './pages/carts/CartPage';
-import OrderPage from './pages/order/OrderPage';
-import OrderReceiptPage from './pages/order/OrderReceiptPage';
-import ProfileEditPage from './pages/mypage/ProfileEditPage';
-import OrderHistoryPage from './pages/order/OrderHistoryPage';
-import ProductDetailPage from './pages/products/ProductDetailPage';
+import { lazy } from 'react';
+
+const LoginPage = lazy(() => import('./pages/login/LoginPage'));
+const ProductPage = lazy(() => import('./pages/products/ProductPage'));
+const Mypage = lazy(() => import('./pages/mypage/Mypage'));
+const CartPage = lazy(() => import('./pages/carts/CartPage'));
+const OrderPage = lazy(() => import('./pages/order/OrderPage'));
+const OrderReceiptPage = lazy(() => import('./pages/order/OrderReceiptPage'));
+const ProfileEditPage = lazy(() => import('./pages/mypage/ProfileEditPage'));
+const OrderHistoryPage = lazy(() => import('./pages/order/OrderHistoryPage'));
+const ProductDetailPage = lazy(
+  () => import('./pages/products/ProductDetailPage')
+);
+const SuccessPage = lazy(() => import('./pages/order/SuccessPage'));
 
 const router = createBrowserRouter([
   {
@@ -64,6 +69,11 @@ const router = createBrowserRouter([
       {
         path: pageRoutes.myHistory,
         element: <OrderHistoryPage />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: pageRoutes.success,
+        element: <SuccessPage />,
         errorElement: <ErrorPage />,
       },
     ],
