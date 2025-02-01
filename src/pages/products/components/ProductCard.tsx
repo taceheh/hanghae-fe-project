@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
 import { useIsLiked } from '@/hooks/products/useIsLiked';
 import { useLike } from '@/hooks/products/useLike';
+import { ImageComponent } from './ImageComponent';
 
 const ProductCardComponent = () => {
   const navigate = useNavigate();
@@ -46,12 +47,13 @@ const ProductCardComponent = () => {
             className="w-[48%] mb-3 relative" // 기존 CSS 클래스 유지
             key={item.id}
           >
-            <img
+            <ImageComponent url={item.image_url} size={290} variant="medium" />
+            {/* <img
               src={item.image_url}
               alt="원두사진"
               className="w-full h-[290px]" // 기존 이미지 스타일 유지
               loading="lazy" // Lazy Loading 적용
-            />
+            /> */}
             {item.isLiked ? (
               <BiSolidHeart
                 onClick={(e) => {

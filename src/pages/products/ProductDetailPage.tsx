@@ -9,6 +9,8 @@ import { useState } from 'react';
 import { BiHeart, BiSolidHeart } from 'react-icons/bi';
 import { useNavigate, useParams } from 'react-router-dom';
 import CartModal from './components/CartModal';
+import { ImageComponent } from './components/ImageComponent';
+import { Button } from '@/components/ui/button';
 
 const ProductDetailPage = () => {
   const { id: productId } = useParams<{ id: string }>();
@@ -88,12 +90,13 @@ const ProductDetailPage = () => {
         onClose={() => setCartModalOpen(false)}
       />
       <div className="">
-        <img
+        {/* <img
           // className="border border-emerald-50 w-[50%] g-50%]"
           className="w-full"
           alt="원두이미지"
           src={product?.image_url}
-        />
+        /> */}
+        <ImageComponent url={product?.image_url} size={600} variant="large" />
         <div className="p-4">
           <div className="flex justify-between items-center">
             <div className="text-xs ">
@@ -134,13 +137,14 @@ const ProductDetailPage = () => {
         <input
           type="number"
           value={count}
+          className="w-20 h-[40px]"
           min={1}
           max={10}
           onChange={(e) => {
             handleCountChange(e.target.value);
           }}
         />
-        <button
+        {/* <button
           className="w-[240px] p-2 text-xs border border-solid text-customBlack font-bold border-gray-200 rounded-none"
           onClick={addCartBtn}
         >
@@ -151,7 +155,13 @@ const ProductDetailPage = () => {
           onClick={handlePurchase}
         >
           바로 구매하기
-        </button>
+        </button> */}
+        <Button
+          onClick={addCartBtn}
+          className="bg-customBlack text-white rounded-none font-medium text-xs p-2 w-[96%] hover:text-pointColor ml-4"
+        >
+          장바구니 담기
+        </Button>
       </div>
       <div className="mt-6 py-4 border-t-[1px] border-black">
         <div className="font-semibold pb-4">상품정보 한 눈에 보기</div>
