@@ -3,6 +3,7 @@ import { pageRoutes } from './apiRoutes';
 import CommonLayout from './pages/common/components/CommonLayout';
 import ErrorPage from './pages/error/components/ErrorPage';
 import { lazy } from 'react';
+import { SubscriptionPage } from './pages/subscriptions/components/SubscriptionPage';
 
 const LoginPage = lazy(() => import('./pages/login/LoginPage'));
 const ProductPage = lazy(() => import('./pages/products/ProductPage'));
@@ -74,6 +75,11 @@ const router = createBrowserRouter([
       {
         path: pageRoutes.success,
         element: <SuccessPage />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: pageRoutes.subscription,
+        element: <SubscriptionPage />,
         errorElement: <ErrorPage />,
       },
     ],

@@ -9,4 +9,6 @@ export const pageRoutes = {
   order: '/order',
   orderReceipt: '/order/receipt',
   myHistory: '/myHistory',
+  success: '/success',
+  subscription: '/subscription',
 };
