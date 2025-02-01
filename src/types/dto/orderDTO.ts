@@ -7,7 +7,8 @@ export interface IOrder {
   total_price: number;
   status: '주문대기' | '주문완료' | '주문취소';
   // status: string;
-  payment_method: '신용카드' | '간편결제';
+  // payment_method: '신용카드' | '간편결제';
+  payment_method: string;
   payment_status: '결제대기' | '결제완료' | '결제취소';
   // payment_method: string;
   shipping_recipient: string;
@@ -17,7 +18,7 @@ export interface IOrder {
   quantity: number;
   // payment_status: string;
 }
-export type OrderInsert = Omit<IOrder, 'id' | 'created_at'>;
+export type OrderInsert = Omit<IOrder, 'created_at'>;
 
 export enum OrderStatus {
   주문완료 = '주문완료',

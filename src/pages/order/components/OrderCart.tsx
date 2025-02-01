@@ -8,7 +8,7 @@ import {
   PaymentStatus,
 } from '@/types/dto/orderDTO';
 import { calculateQuantity, calculateTotalAmount } from '@/utils/cartUtil';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { OrderListComponent } from './OrderListItem';
 import {
   useInsertOrder,
@@ -17,7 +17,9 @@ import {
 } from '@/hooks/order/useOrder';
 import { useNavigate } from 'react-router-dom';
 import { useCartDelete } from '@/hooks/cart/useCartDelete';
-
+import { PaymentWidget } from './PaymentWidget';
+import { addressFormat } from '@/utils/addressFromat';
+import { v4 as uuidv4 } from 'uuid';
 const OrderCartComponent = () => {
   const { selectedItems, clearSelectedItems } = useCartStore();
 
@@ -33,68 +35,72 @@ const OrderCartComponent = () => {
     return data?.filter((item) => selectedItems.includes(item.id));
   }, [data, selectedItems]);
 
-  const handleOrderBtn = async () => {
-    if (!user?.id) {
-      console.error('로그인 정보가 없습니다.');
-      return;
-    }
-    // const cartId = selectedItems;
-    const orderData = {
-      user_id: user.id,
-      total_price: calculateTotalAmount(filteredCartData, selectedItems) + 3000,
-      status: OrderStatus.주문완료,
-      payment_method: PaymentMethod.신용카드,
-      payment_status: PaymentStatus.결제완료,
-      shipping_recipient: user.id,
-      shipping_address: 'g',
-      shipping_phone: user.id,
-      quantity: calculateQuantity(selectedItems),
-    };
-    insertOrder(orderData, {
-      onSuccess: async (newOrder) => {
-        console.log('주문 삽입 성공:', newOrder);
+  const address = addressFormat({
+    zonecode: user?.address.zonecode ?? '',
+    roadAddress: user?.address.roadAddress ?? '',
+    detailAddress: user?.address.detailAddress ?? '',
+  });
 
-        const productData = cartDetails;
-        if (!productData || productData.length === 0) {
-          console.error('장바구니 데이터 없음');
-          return;
-        }
-        console.log(productData);
+  // const handleOrderBtn = async () => {
+  //   if (!user?.id) {
+  //     console.error('로그인 정보가 없습니다.');
+  //     return;
+  //   }
+  //   // const cartId = selectedItems;
+  //   const orderData = {
+  //     // id: orderId,
+  //     user_id: user.id,
+  //     total_price: calculateTotalAmount(filteredCartData, selectedItems) + 3000,
+  //     status: OrderStatus.주문완료,
+  //     payment_method: PaymentMethod.신용카드,
+  //     payment_status: PaymentStatus.결제완료,
+  //     shipping_recipient: user.id,
+  //     shipping_address: address,
+  //     shipping_phone: user.phonenumber!,
+  //     quantity: calculateQuantity(selectedItems),
+  //   };
+  //   insertOrder(orderData, {
+  //     onSuccess: async (newOrder) => {
+  //       console.log('주문 삽입 성공:', newOrder);
 
-        console.log(newOrder);
-        insertOrderItem(
-          { productData, orderId: newOrder.id },
-          {
-            onSuccess: () => {
-              console.log('주문 항목 삽입 성공');
-              deleteCart({ cartIds: selectedItems, userId: user.id });
-              clearSelectedItems();
+  //       const productData = cartDetails;
+  //       if (!productData || productData.length === 0) {
+  //         console.error('장바구니 데이터 없음');
+  //         return;
+  //       }
+  //       console.log(productData);
 
-              navigate('/order/receipt', {
-                state: { isSuccess: true, orderId: newOrder.id },
-              });
-            },
-            onError: (error) => {
-              console.error('주문 항목 삽입 실패:', error);
-            },
-          }
-        );
-      },
-      onError: (error) => {
-        console.error('주문 삽입 실패:', error);
-      },
-    });
-  };
+  //       console.log(newOrder);
+  //       insertOrderItem(
+  //         { productData, orderId: newOrder.id },
+  //         {
+  //           onSuccess: () => {
+  //             console.log('주문 항목 삽입 성공');
+  //             deleteCart({ cartIds: selectedItems, userId: user.id });
+  //             clearSelectedItems();
+
+  //             navigate('/order/receipt', {
+  //               state: { isSuccess: true, orderId: newOrder.id },
+  //             });
+  //           },
+  //           onError: (error) => {
+  //             console.error('주문 항목 삽입 실패:', error);
+  //           },
+  //         }
+  //       );
+  //     },
+  //     onError: (error) => {
+  //       console.error('주문 삽입 실패:', error);
+  //     },
+  //   });
+  // };
   return (
     <div className="mt-6">
       <div className="  mx-4 py-4 border-t-[0.2rem] border-black">
         <div className="font-semibold pb-4 border-b-2">배송 정보</div>
         <div className="mt-6 mb-3 text-sm">
           <div className="font-semibold mb-2">{user?.name}</div>
-          <div className="mb-2">
-            ({user?.address.zonecode})&nbsp;{user?.address.roadAddress}&nbsp;
-            {user?.address.detailAddress}
-          </div>
+          <div className="mb-2">{address}</div>
           <div> {user?.phonenumber}</div>
           {/* <div>주문시 요청사항</div> */}
         </div>
@@ -150,13 +156,18 @@ const OrderCartComponent = () => {
         </div>
       </div>
       <div className="p-4 flex justify-center align-middle bg-gray-100">
-        <Button
+        <PaymentWidget
+          totalPrice={
+            calculateTotalAmount(filteredCartData, selectedItems) + 3000
+          }
+        />
+        {/* <Button
           onClick={handleOrderBtn}
           className="bg-customBlack text-white rounded-none font-medium text-xs p-2 w-[96%] hover:text-pointColor"
         >
           {calculateTotalAmount(filteredCartData, selectedItems) + 3000}원
           구매하기
-        </Button>
+        </Button> */}
       </div>
     </div>
   );
