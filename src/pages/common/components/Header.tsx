@@ -1,6 +1,12 @@
 import { useCartItems } from '@/hooks/cart/useCartItems';
-import { ShoppingBagIcon, User } from 'lucide-react';
+import { ShoppingBagIcon, User, Ticket } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -10,6 +16,9 @@ const Header = () => {
   };
   const goToHomePage = () => {
     navigate('/');
+  };
+  const goToSubscription = () => {
+    navigate('/subscription');
   };
   const goToMyPage = () => {
     navigate('/mypage');
@@ -24,8 +33,22 @@ const Header = () => {
         src="/images/tastebean_logo.png"
         alt="Logo"
       />
-      <div className="flex">
-        <User onClick={goToMyPage} className="h-6 w-6 text-customBlack" />
+      <div className="flex border-none ">
+        <TooltipProvider>
+          <Tooltip delayDuration={0}>
+            <TooltipTrigger className="border-none focus:outline-none">
+              <Ticket
+                onClick={goToSubscription}
+                className="h-6 w-6 text-customBlack cursor-pointer hover:border-none border-none"
+              />
+            </TooltipTrigger>
+            <TooltipContent className="bg-pointColor text-white text-xs font-semibold px-3 py-1 shadow-md border-none rounded-[2px]">
+              구독하고 매달 원두를 받아보세요!
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
+        <User onClick={goToMyPage} className="h-6 w-6 ml-5 text-customBlack" />
         <div className="relative">
           <ShoppingBagIcon
             onClick={goToProductPage}

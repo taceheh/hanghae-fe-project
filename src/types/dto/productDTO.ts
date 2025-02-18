@@ -8,6 +8,7 @@ export interface IProduct {
   weight: number;
   image_url: string;
   created_at: string;
+  seller_id: string;
 }
 export interface ProductResponse {
   data: ProductRelatedData[]; // 현재 페이지 데이터

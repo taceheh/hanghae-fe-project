@@ -1,24 +1,18 @@
 import { Button } from '@/components/ui/button';
-import { useCartItems } from '@/hooks/cart/useCartItems';
 import useAuthStore from '@/stores/auth/useAuthStore';
-import useCartStore from '@/stores/cart/useCartStore';
 import { addressFormat } from '@/utils/addressFromat';
-import { calculateTotalAmount } from '@/utils/cartUtil';
-import { useMemo, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { OrderListComponent } from './OrderListItem';
-import { PaymentWidget } from './PaymentWidget';
-import { Postcode } from '@/pages/mypage/components/PostCode';
-const OrderCartComponent = () => {
-  const { selectedItems, clearSelectedItems } = useCartStore();
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
+import { Postcode } from '@/pages/mypage/components/PostCode';
+import { SubscriptionPayment } from './components/SubscriptionPayment';
+const OrderSubscriptionPage = () => {
   const { user } = useAuthStore();
-  const { data } = useCartItems();
   const navigate = useNavigate();
+  const location = useLocation();
+  const subscriptionData = location.state;
   // selectedItems의 id와 data의 id가 일치하는 애들만 필터링 해줄건데
-  const filteredCartData = useMemo(() => {
-    return data?.filter((item) => selectedItems.includes(item.id));
-  }, [data, selectedItems]);
+
   const [recipient, setRecipient] = useState(user?.name || '');
   const [phoneNum, setPhoneNum] = useState(user?.phonenumber || '');
   const [postcode, setPostcode] = useState(user?.address?.zonecode || '');
@@ -42,6 +36,11 @@ const OrderCartComponent = () => {
     );
   }, [recipient, phoneNum, postcode, roadAddress, detailAddress]);
   const deliveryInfo = {
+    coffee: subscriptionData.coffee,
+    weight: subscriptionData.weight,
+    duration: subscriptionData.duration,
+    interval: subscriptionData.interval,
+    quantity: subscriptionData.quantity,
     recipient: recipient,
     address: addressFormat({
       zonecode: postcode,
@@ -120,9 +119,21 @@ const OrderCartComponent = () => {
       <div className=" mx-4 py-4 border-t-[0.2rem] border-black">
         <div className="font-semibold pb-4 border-b-2">상품 정보</div>
 
-        {filteredCartData?.map((item) => (
-          <OrderListComponent key={item.id} cart={item} />
-        ))}
+        <div className="mt-6 mb-3 text-sm flex items-center">
+          <div className="mr-4">
+            <img className="w-20 h-20" alt="이미지" />
+          </div>
+          <div>
+            <div className="mb-2 font-semibold">{subscriptionData.coffee}</div>
+            <div className="mb-2">
+              {subscriptionData.weight} / {subscriptionData.quantity}개{' '}
+            </div>
+            <div className="mb-2">
+              {subscriptionData.interval} 간격 / {subscriptionData.duration}
+            </div>
+            <div>{subscriptionData.totalPrice}원</div>
+          </div>
+        </div>
       </div>
       <div className=" mx-4 py-4 border-t-[0.2rem] border-black">
         <div className="font-semibold pb-4 border-b-2">결제 방법</div>
@@ -145,34 +156,14 @@ const OrderCartComponent = () => {
         <div className="flex justify-between  pb-4 border-b-2">
           <div className="font-semibold">결제 금액</div>
           <div className="font-bold text-pointColor">
-            {calculateTotalAmount(filteredCartData, selectedItems) + 3000}원
-          </div>
-        </div>
-        <div className="flex justify-between text-sm my-4">
-          <div>
-            <div className="mb-2">총 상품 금액</div>
-            <div>배송비</div>
-          </div>
-          <div>
-            <div className="mb-2 text-right">
-              {calculateTotalAmount(filteredCartData, selectedItems)}원
-            </div>
-            <div>+3,000원</div>
-          </div>
-        </div>
-        <div className="flex justify-between text-sm font-semibold py-4 border-t-2 ">
-          <div className="">총 결제 금액</div>
-          <div>
-            {calculateTotalAmount(filteredCartData, selectedItems) + 3000}원
+            {subscriptionData.totalPrice}원
           </div>
         </div>
       </div>
       <div className="p-4 flex justify-center align-middle bg-gray-100">
-        <PaymentWidget
+        <SubscriptionPayment
           isFormValid={isFormValid}
-          totalPrice={
-            calculateTotalAmount(filteredCartData, selectedItems) + 3000
-          }
+          totalPrice={subscriptionData.totalPrice}
           deliveryInfo={deliveryInfo}
         />
       </div>
@@ -180,4 +171,4 @@ const OrderCartComponent = () => {
   );
 };
 
-export default OrderCartComponent;
+export default OrderSubscriptionPage;

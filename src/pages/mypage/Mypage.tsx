@@ -1,5 +1,6 @@
 import GoogleLoginBtn from '@/pages/login/components/GoogleLoginBtn';
 import useAuthStore from '@/stores/auth/useAuthStore';
+import supabase from '@/supabase';
 import { useNavigate } from 'react-router-dom';
 
 const Mypage = () => {
@@ -7,10 +8,40 @@ const Mypage = () => {
   const navigate = useNavigate();
   const navigateEditPage = () => navigate('/mypage/profile');
   const navigateHistoryPage = () => navigate('/myHistory');
+  const navigateToSubPage = () => navigate('/subscription/history');
+
+  const handleDeleteUser = async () => {
+    if (!user?.id) return alert('사용자 정보가 없습니다.');
+
+    const confirmDelete = window.confirm('정말로 회원 탈퇴하시겠습니까?');
+    if (!confirmDelete) return;
+
+    try {
+      // const { error: authError } = await supabase
+      //   .from('auth.users')
+      //   .delete()
+      //   .eq('id', user.id);
+      // if (authError) throw new Error(`${authError.message}`);
+
+      const { error: dbError } = await supabase
+        .from('users')
+        .delete()
+        .eq('id', user.id);
+
+      if (dbError)
+        throw new Error(`users 테이블 삭제 실패: ${dbError.message}`);
+
+      // ✅ 로그아웃 후 홈으로 이동
+      await supabase.auth.signOut();
+      alert('회원 탈퇴가 완료되었습니다.');
+      navigate('/');
+    } catch (error: any) {
+      alert(`회원 탈퇴 실패: ${error.message}`);
+    }
+  };
+
   if (!isLogin) {
-    // 로그인되지 않은 경우
     return (
-      // bg-coffee-background bg-cover
       <div
         className="relative
         bg-center mt-48 flex flex-col items-center justify-center gap-6"
@@ -21,16 +52,13 @@ const Mypage = () => {
           간단한 로그인을 통해 테이스트빈을 이용해보세요.
         </p>
 
-        {/* 구글 로그인 버튼 */}
         <GoogleLoginBtn />
       </div>
     );
   }
 
-  // 로그인된 경우 (예시: 마이페이지 콘텐츠)
   return (
     <div className="relative bg-white min-h-[calc(100vh-60px)]">
-      {/* <h1 className="text-4xl font-bold">Welcome to your MyPage!</h1> */}
       <div className=" pt-16 px-8 pb-8">
         <div className="text-2xl font-bold">{user?.name}님</div>
         <div className="text-sm">구독중인 플랜이 없어요!</div>
@@ -40,7 +68,9 @@ const Mypage = () => {
         <div className="pb-8 cursor-pointer" onClick={navigateHistoryPage}>
           주문내역
         </div>
-        <div>구독 정보 관리</div>
+        <div className="cursor-pointer" onClick={navigateToSubPage}>
+          구독 정보 관리
+        </div>
       </div>
 
       <div className="border-t border-gray-300"></div>
@@ -52,7 +82,7 @@ const Mypage = () => {
           회원정보 수정
         </div>
 
-        <div>회원 탈퇴하기</div>
+        {/* <div onClick={handleDeleteUser}>회원 탈퇴하기</div> */}
       </div>
     </div>
   );

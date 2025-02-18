@@ -1,13 +1,12 @@
-import { useProducts } from '@/hooks/products/useProducts';
-import { IProduct, ProductRelatedData } from '@/types/dto/productDTO';
-import { useEffect, useState } from 'react';
-import useAuthStore from '@/stores/auth/useAuthStore';
-import supabase from '@/supabase';
-import { BiHeart, BiSolidCommentDetail, BiSolidHeart } from 'react-icons/bi';
-import { useNavigate } from 'react-router-dom';
-import { useInView } from 'react-intersection-observer';
-import { useIsLiked } from '@/hooks/products/useIsLiked';
 import { useLike } from '@/hooks/products/useLike';
+import { useProducts } from '@/hooks/products/useProducts';
+import useAuthStore from '@/stores/auth/useAuthStore';
+import { ProductRelatedData } from '@/types/dto/productDTO';
+import { useEffect } from 'react';
+import { BiHeart, BiSolidCommentDetail, BiSolidHeart } from 'react-icons/bi';
+import { useInView } from 'react-intersection-observer';
+import { useNavigate } from 'react-router-dom';
+import { ImageComponent } from './ImageComponent';
 
 const ProductCardComponent = () => {
   const navigate = useNavigate();
@@ -15,16 +14,27 @@ const ProductCardComponent = () => {
   // const { data: isLiked } = isLogin ? useIsLiked(productId!, userId!) : {};
   const { mutate: likeMutate } = useLike(user?.id!);
 
-  const { ref, inView } = useInView();
+  const { ref, inView } = useInView({
+    threshold: 0.3, // footer가 완전히 보일 때만 감지
+  });
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useProducts(
     user?.id!
   );
 
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
     if (inView && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
+      timeoutId = setTimeout(() => {
+        fetchNextPage();
+      }, 50); // 300ms 디바운스
     }
-    console.log(data);
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, [inView, hasNextPage, isFetchingNextPage]);
 
   const handleLikeToggle = (productId: string, isLiked: boolean) => {
@@ -46,12 +56,8 @@ const ProductCardComponent = () => {
             className="w-[48%] mb-3 relative" // 기존 CSS 클래스 유지
             key={item.id}
           >
-            <img
-              src={item.image_url}
-              alt="원두사진"
-              className="w-full h-[290px]" // 기존 이미지 스타일 유지
-              loading="lazy" // Lazy Loading 적용
-            />
+            <ImageComponent url={item.image_url} size={290} variant="medium" />
+
             {item.isLiked ? (
               <BiSolidHeart
                 onClick={(e) => {
