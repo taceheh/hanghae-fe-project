@@ -11,6 +11,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import CartModal from './components/CartModal';
 import { ImageComponent } from './components/ImageComponent';
 import { Button } from '@/components/ui/button';
+import { IoStarSharp } from 'react-icons/io5';
+import { useGetReviewAverage } from '@/hooks/products/useGetReviewAverage';
+import { ReviewStar } from './components/ReviewStar';
 
 const ProductDetailPage = () => {
   const { id: productId } = useParams<{ id: string }>();
@@ -28,6 +31,7 @@ const ProductDetailPage = () => {
     : { mutate: () => {} }; // 빈 함수로 처리
   const { mutate: cartMutate } = useCartInsert();
   const { data: reviews } = useGetReviews(productId!);
+  const { data: reviewAverage } = useGetReviewAverage(productId!);
 
   // 기본 검증
   if (!productId) return <div>잘못된 요청입니다.</div>;
@@ -73,7 +77,7 @@ const ProductDetailPage = () => {
       console.error('유효하지 않은 상품입니다.');
       return;
     }
-
+    console.log(reviews);
     navigate('/order', {
       state: {
         isDirectPurchase: true,
@@ -198,15 +202,17 @@ const ProductDetailPage = () => {
       ) : (
         <div className="pb-10">
           {/* TODO: ANY타입 고쳐야함 (타입생성해야할듯) */}
-          <div className="font-semibold my-6">
-            리뷰 ({reviews?.length}) ★★★★★
+          <div className="font-semibold my-6 flex items-center">
+            <span className="pr-1">리뷰 ({reviewAverage}) </span>
+            <ReviewStar rating={reviewAverage} />
           </div>
           {reviews?.map((item: any) => (
             <div key={item.id} className="py-2  border-b-[1px]">
-              <div className="flex justify-between mb-2">
-                <div className=" text-xs">
-                  ★★★★★ {formatName(item.users?.name)}
-                </div>{' '}
+              <div className="flex justify-between mb-2 text-xs">
+                <div className="flex">
+                  <ReviewStar rating={item.rating} />
+                  <span className="pl-2">{formatName(item.users?.name)}</span>
+                </div>
                 <div className=" text-xs">
                   {formatISOToDate(item.created_at)}
                 </div>

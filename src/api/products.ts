@@ -132,6 +132,7 @@ export const fetchProductReviews = async (productId: string) => {
       user_id,
       comment,
       created_at,
+      rating,
       users (name)
     `
     )
@@ -143,4 +144,42 @@ export const fetchProductReviews = async (productId: string) => {
   }
 
   return data;
+};
+
+export const fetchReviewAverage = async (productId: string) => {
+  if (!productId) throw new Error('상품 ID가 유효하지 않습니다.');
+
+  const { data, error } = await supabase.rpc('get_average_rating', {
+    p_product_id: productId,
+  });
+  if (error) {
+    console.error('리뷰 데이터를 가져오는 중 에러 발생:', error.message);
+    throw new Error(error.message);
+  }
+  console.log(data);
+  return data;
+};
+
+export const checkUserReview = async ({
+  productId,
+  userId,
+  orderId,
+}: {
+  productId: string;
+  userId: string;
+  orderId: string;
+}) => {
+  const { data, error } = await supabase
+    .from('reviews')
+    .select()
+    .eq('user_id', userId)
+    .eq('product_id', productId)
+    .eq('order_id', orderId)
+    .single();
+
+  if (error) {
+    return false;
+  }
+
+  return !!data;
 };
