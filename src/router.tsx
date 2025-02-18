@@ -3,7 +3,8 @@ import { pageRoutes } from './apiRoutes';
 import CommonLayout from './pages/common/components/CommonLayout';
 import ErrorPage from './pages/error/components/ErrorPage';
 import { lazy } from 'react';
-import { SubscriptionPage } from './pages/subscriptions/components/SubscriptionPage';
+import SubscriptionHistoryPage from './pages/subscriptions/SubscriptionHistoryPage';
+import SubDetailPage from './pages/subscriptions/SubDetailPage';
 
 const LoginPage = lazy(() => import('./pages/login/LoginPage'));
 const ProductPage = lazy(() => import('./pages/products/ProductPage'));
@@ -17,6 +18,30 @@ const ProductDetailPage = lazy(
   () => import('./pages/products/ProductDetailPage')
 );
 const SuccessPage = lazy(() => import('./pages/order/SuccessPage'));
+const SubscriptionPage = lazy(
+  () => import('./pages/subscriptions/SubscriptionPage')
+);
+const OrderSubscriptionPage = lazy(
+  () => import('./pages/subscriptions/OrderSubscriptionPage')
+);
+const SubscriptionSuccessPage = lazy(
+  () => import('./pages/subscriptions/SubscriptionSuccessPage')
+);
+const SubscriptionReceiptPage = lazy(
+  () => import('./pages/subscriptions/SubscriptionReceiptPage')
+);
+
+// import LoginPage from './pages/login/LoginPage';
+// import ProductPage from './pages/products/ProductPage';
+// import Mypage from './pages/mypage/Mypage';
+// import CartPage from './pages/carts/CartPage';
+// import OrderPage from './pages/order/OrderPage';
+// import OrderReceiptPage from './pages/order/OrderReceiptPage';
+// import ProfileEditPage from './pages/mypage/ProfileEditPage';
+// import OrderHistoryPage from './pages/order/OrderHistoryPage';
+// import ProductDetailPage from './pages/products/ProductDetailPage';
+// import SuccessPage from './pages/order/SuccessPage';
+// import { SubscriptionPage } from './pages/subscriptions/components/SubscriptionPage';
 
 const router = createBrowserRouter([
   {
@@ -80,6 +105,31 @@ const router = createBrowserRouter([
       {
         path: pageRoutes.subscription,
         element: <SubscriptionPage />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: pageRoutes.subscriptionOrder,
+        element: <OrderSubscriptionPage />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: pageRoutes.subscriptionSuccess,
+        element: <SubscriptionSuccessPage />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: pageRoutes.subscriptionReceipt,
+        element: <SubscriptionReceiptPage />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: pageRoutes.subscriptionHistory,
+        element: <SubscriptionHistoryPage />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: `${pageRoutes.subscriptionDetail}/:id`,
+        element: <SubDetailPage />,
         errorElement: <ErrorPage />,
       },
     ],

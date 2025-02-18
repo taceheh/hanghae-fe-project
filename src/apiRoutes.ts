@@ -11,4 +11,9 @@ export const pageRoutes = {
   myHistory: '/myHistory',
   success: '/success',
   subscription: '/subscription',
+  subscriptionOrder: '/subscription/order',
+  subscriptionReceipt: '/subscription/receipt',
+  subscriptionSuccess: '/subscription/success',
+  subscriptionHistory: '/subscription/history',
+  subscriptionDetail: '/subscription/detail',
 };
