@@ -8,10 +8,18 @@ import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
-const clientKey = 'test_ck_26DlbXAaV0Oam4R9M6Q43qY50Q9R';
-const customerKey = 'uQSSlA-18kvqCx9FEavhR';
+const clientKey = import.meta.env.VITE_TOSS_CLIENT_KEY;
+const customerKey = import.meta.env.VITE_TOSS_CUSTOMER_KEY;
 
-export const PaymentWidget = ({ totalPrice }: { totalPrice: number }) => {
+export const PaymentWidget = ({
+  totalPrice,
+  isFormValid,
+  deliveryInfo,
+}: {
+  totalPrice: number;
+  isFormValid: boolean;
+  deliveryInfo: any;
+}) => {
   const { user } = useAuthStore();
   const { data } = useCartItems();
   const { selectedItems } = useCartStore();
@@ -33,6 +41,7 @@ export const PaymentWidget = ({ totalPrice }: { totalPrice: number }) => {
       (filteredCartData?.length! - 1) +
       '건'
   );
+  console.log(deliveryInfo);
 
   useEffect(() => {
     const fetchPayment = async () => {
@@ -55,6 +64,7 @@ export const PaymentWidget = ({ totalPrice }: { totalPrice: number }) => {
       console.error('Payment instance is not initialized yet.');
       return;
     }
+    sessionStorage.setItem('deliveryInfo', JSON.stringify(deliveryInfo));
 
     try {
       await payment.requestPayment({
@@ -74,8 +84,8 @@ export const PaymentWidget = ({ totalPrice }: { totalPrice: number }) => {
         successUrl: window.location.origin + '/success',
         failUrl: window.location.origin + '/fail',
         customerEmail: user?.email,
-        customerName: user?.name,
-        customerMobilePhone: user?.phonenumber,
+        customerName: deliveryInfo.recipient,
+        customerMobilePhone: deliveryInfo.phoneNum,
         card: {
           useEscrow: false,
           flowMode: 'DEFAULT',
@@ -91,7 +101,9 @@ export const PaymentWidget = ({ totalPrice }: { totalPrice: number }) => {
   return (
     <Button
       onClick={() => requestPayment()}
-      className="bg-customBlack text-white rounded-none font-medium text-xs p-2 w-[96%] hover:text-pointColor"
+      disabled={!isFormValid}
+      className={`bg-customBlack text-white rounded-none font-medium text-xs p-2 w-[96%] 
+    ${!isFormValid ? 'opacity-50 cursor-not-allowed' : 'hover:text-pointColor'}`}
     >
       {totalPrice}원 구매하기
     </Button>

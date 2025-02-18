@@ -2,31 +2,16 @@ import { Button } from '@/components/ui/button';
 import { useCartItems } from '@/hooks/cart/useCartItems';
 import useAuthStore from '@/stores/auth/useAuthStore';
 import useCartStore from '@/stores/cart/useCartStore';
-import {
-  OrderStatus,
-  PaymentMethod,
-  PaymentStatus,
-} from '@/types/dto/orderDTO';
-import { calculateQuantity, calculateTotalAmount } from '@/utils/cartUtil';
-import { useMemo, useState } from 'react';
-import { OrderListComponent } from './OrderListItem';
-import {
-  useInsertOrder,
-  useCartDetails,
-  useInsertOrderItem,
-} from '@/hooks/order/useOrder';
-import { useNavigate } from 'react-router-dom';
-import { useCartDelete } from '@/hooks/cart/useCartDelete';
-import { PaymentWidget } from './PaymentWidget';
 import { addressFormat } from '@/utils/addressFromat';
-import { v4 as uuidv4 } from 'uuid';
+import { calculateTotalAmount } from '@/utils/cartUtil';
+import { useMemo, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { OrderListComponent } from './OrderListItem';
+import { PaymentWidget } from './PaymentWidget';
+import { Postcode } from '@/pages/mypage/components/PostCode';
 const OrderCartComponent = () => {
   const { selectedItems, clearSelectedItems } = useCartStore();
 
-  const { data: cartDetails } = useCartDetails(selectedItems);
-  const { mutate: insertOrder } = useInsertOrder();
-  const { mutate: insertOrderItem } = useInsertOrderItem();
-  const { mutate: deleteCart } = useCartDelete();
   const { user } = useAuthStore();
   const { data } = useCartItems();
   const navigate = useNavigate();
@@ -34,75 +19,102 @@ const OrderCartComponent = () => {
   const filteredCartData = useMemo(() => {
     return data?.filter((item) => selectedItems.includes(item.id));
   }, [data, selectedItems]);
+  const [recipient, setRecipient] = useState(user?.name || '');
+  const [phoneNum, setPhoneNum] = useState(user?.phonenumber || '');
+  const [postcode, setPostcode] = useState(user?.address?.zonecode || '');
+  const [roadAddress, setRoadAddress] = useState(
+    user?.address?.roadAddress || ''
+  );
+  const [detailAddress, setDetailAddress] = useState(
+    user?.address?.detailAddress || ''
+  );
 
-  const address = addressFormat({
-    zonecode: user?.address.zonecode ?? '',
-    roadAddress: user?.address.roadAddress ?? '',
-    detailAddress: user?.address.detailAddress ?? '',
-  });
+  const [isFormValid, setIsFormValid] = useState(false);
 
-  // const handleOrderBtn = async () => {
-  //   if (!user?.id) {
-  //     console.error('로그인 정보가 없습니다.');
-  //     return;
-  //   }
-  //   // const cartId = selectedItems;
-  //   const orderData = {
-  //     // id: orderId,
-  //     user_id: user.id,
-  //     total_price: calculateTotalAmount(filteredCartData, selectedItems) + 3000,
-  //     status: OrderStatus.주문완료,
-  //     payment_method: PaymentMethod.신용카드,
-  //     payment_status: PaymentStatus.결제완료,
-  //     shipping_recipient: user.id,
-  //     shipping_address: address,
-  //     shipping_phone: user.phonenumber!,
-  //     quantity: calculateQuantity(selectedItems),
-  //   };
-  //   insertOrder(orderData, {
-  //     onSuccess: async (newOrder) => {
-  //       console.log('주문 삽입 성공:', newOrder);
+  // 🚀 **입력값이 모두 채워졌는지 확인**
+  useEffect(() => {
+    setIsFormValid(
+      !!recipient &&
+        !!phoneNum &&
+        !!postcode &&
+        !!roadAddress &&
+        !!detailAddress
+    );
+  }, [recipient, phoneNum, postcode, roadAddress, detailAddress]);
+  const deliveryInfo = {
+    recipient: recipient,
+    address: addressFormat({
+      zonecode: postcode,
+      roadAddress: roadAddress,
+      detailAddress: detailAddress,
+    }),
+    phoneNum: phoneNum,
+  };
 
-  //       const productData = cartDetails;
-  //       if (!productData || productData.length === 0) {
-  //         console.error('장바구니 데이터 없음');
-  //         return;
-  //       }
-  //       console.log(productData);
+  const handleAddressComplete = (data: {
+    postcode: string;
+    address: string;
+  }) => {
+    setPostcode(data.postcode); // 우편번호 저장
+    setRoadAddress(data.address); // 주소 저장
+  };
 
-  //       console.log(newOrder);
-  //       insertOrderItem(
-  //         { productData, orderId: newOrder.id },
-  //         {
-  //           onSuccess: () => {
-  //             console.log('주문 항목 삽입 성공');
-  //             deleteCart({ cartIds: selectedItems, userId: user.id });
-  //             clearSelectedItems();
-
-  //             navigate('/order/receipt', {
-  //               state: { isSuccess: true, orderId: newOrder.id },
-  //             });
-  //           },
-  //           onError: (error) => {
-  //             console.error('주문 항목 삽입 실패:', error);
-  //           },
-  //         }
-  //       );
-  //     },
-  //     onError: (error) => {
-  //       console.error('주문 삽입 실패:', error);
-  //     },
-  //   });
-  // };
   return (
     <div className="mt-6">
       <div className="  mx-4 py-4 border-t-[0.2rem] border-black">
         <div className="font-semibold pb-4 border-b-2">배송 정보</div>
         <div className="mt-6 mb-3 text-sm">
-          <div className="font-semibold mb-2">{user?.name}</div>
-          <div className="mb-2">{address}</div>
-          <div> {user?.phonenumber}</div>
-          {/* <div>주문시 요청사항</div> */}
+          <div className=" mb-4 flex">
+            <div className="font-semibold mr-2">
+              수령인 <span className="text-pointColor">*</span>
+            </div>
+            <input
+              onChange={(e) => setRecipient(e.target.value)}
+              value={recipient}
+              className="w-[200px] mr-2 p-2 border-gray-300 border-[1px] mb-2"
+            />
+          </div>
+          <div className="mb-4 flex">
+            <div className="font-semibold mr-2">
+              배송지 <span className="text-pointColor">*</span>
+            </div>
+            <div className="">
+              <div>
+                <input
+                  type="text"
+                  value={postcode}
+                  onChange={(e) => setPostcode(e.target.value)}
+                  placeholder="우편번호"
+                  className="w-[200px] mr-2 p-2 border-gray-300 border-[1px] mb-2"
+                />
+                <Postcode onComplete={handleAddressComplete} />
+              </div>
+              <input
+                type="text"
+                value={roadAddress}
+                onChange={(e) => setRoadAddress(e.target.value)}
+                placeholder="주소"
+                className="w-full p-2 border-gray-300 border-[1px] mb-2"
+              />
+              <input
+                type="text"
+                value={detailAddress}
+                onChange={(e) => setDetailAddress(e.target.value)}
+                placeholder="상세주소"
+                className="w-full p-2 border-gray-300 border-[1px]"
+              />
+            </div>
+          </div>
+          <div className="font-semibold mb-2 flex">
+            <div className="mr-2">
+              연락처 <span className="text-pointColor">*</span>
+            </div>
+            <input
+              onChange={(e) => setPhoneNum(e.target.value)}
+              value={phoneNum}
+              className="w-[200px] mr-2 p-2 border-gray-300 border-[1px] mb-2"
+            />
+          </div>
         </div>
       </div>
       <div className=" mx-4 py-4 border-t-[0.2rem] border-black">
@@ -124,9 +136,9 @@ const OrderCartComponent = () => {
             토스페이
           </Button>
 
-          <Button className="w-[49%] border-gray-300 flex items-center justify-center">
+          {/* <Button className="w-[49%] border-gray-300 flex items-center justify-center">
             일반결제
-          </Button>
+          </Button> */}
         </div>
       </div>
       <div className="mx-4 py-4 border-t-[0.2rem] border-black">
@@ -157,17 +169,12 @@ const OrderCartComponent = () => {
       </div>
       <div className="p-4 flex justify-center align-middle bg-gray-100">
         <PaymentWidget
+          isFormValid={isFormValid}
           totalPrice={
             calculateTotalAmount(filteredCartData, selectedItems) + 3000
           }
+          deliveryInfo={deliveryInfo}
         />
-        {/* <Button
-          onClick={handleOrderBtn}
-          className="bg-customBlack text-white rounded-none font-medium text-xs p-2 w-[96%] hover:text-pointColor"
-        >
-          {calculateTotalAmount(filteredCartData, selectedItems) + 3000}원
-          구매하기
-        </Button> */}
       </div>
     </div>
   );

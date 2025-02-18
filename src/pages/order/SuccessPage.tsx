@@ -26,20 +26,40 @@ const SuccessPage = () => {
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [deliveryInfo, setDeliveryInfo] = useState<any>(null);
 
   const paymentKey = searchParams.get('paymentKey');
   const orderId = searchParams.get('orderId');
   const amount = searchParams.get('amount');
 
-  const address = addressFormat({
-    zonecode: user?.address.zonecode ?? '',
-    roadAddress: user?.address.roadAddress ?? '',
-    detailAddress: user?.address.detailAddress ?? '',
-  });
+  // const address = addressFormat({
+  //   zonecode: user?.address.zonecode ?? '',
+  //   roadAddress: user?.address.roadAddress ?? '',
+  //   detailAddress: user?.address.detailAddress ?? '',
+  // });
+  useEffect(() => {
+    const storedDeliveryInfo = sessionStorage.getItem('deliveryInfo');
+    if (storedDeliveryInfo) {
+      console.log('✅ 세션 스토리지에서 배송 정보 로드:', storedDeliveryInfo);
+      setDeliveryInfo(JSON.parse(storedDeliveryInfo));
+    } else {
+      console.error('🚨 세션 스토리지에서 배송 정보를 찾을 수 없음.');
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isCartDetailsLoading && cartDetails && !isProcessing && deliveryInfo) {
+      confirmPayment();
+    }
+  }, [isCartDetailsLoading, cartDetails, isProcessing, deliveryInfo]);
 
   const confirmPayment = async () => {
     if (!orderId || !paymentKey || !amount || !user?.id || isProcessing) {
       console.error('필요한 데이터가 누락되었거나 이미 처리 중입니다.');
+      return;
+    }
+    if (!deliveryInfo) {
+      console.error('🚨 배송 정보가 없습니다.');
       return;
     }
 
@@ -75,6 +95,11 @@ const SuccessPage = () => {
 
       const responseData = await response.json();
 
+      // const storedDeliveryInfo = sessionStorage.getItem('deliveryInfo');
+      // if (storedDeliveryInfo) {
+      //   setDeliveryInfo(JSON.parse(storedDeliveryInfo));
+      // }
+
       // 3. 주문 데이터 생성
       const orderData = {
         id: orderId,
@@ -83,9 +108,9 @@ const SuccessPage = () => {
         status: OrderStatus.주문완료,
         payment_method: responseData.method,
         payment_status: PaymentStatus.결제완료,
-        shipping_recipient: user.id,
-        shipping_address: address,
-        shipping_phone: user.phonenumber!,
+        shipping_recipient: deliveryInfo.recipient,
+        shipping_address: deliveryInfo.address,
+        shipping_phone: deliveryInfo.phoneNum,
         quantity: calculateQuantity(selectedItems),
         paymentKey: paymentKey,
       };
@@ -103,6 +128,7 @@ const SuccessPage = () => {
               onSuccess: () => {
                 deleteCart({ cartIds: selectedItems, userId: user.id });
                 clearSelectedItems();
+                sessionStorage.removeItem('deliveryInfo');
                 navigate('/order/receipt', {
                   state: { isSuccess: true, orderId: newOrder.id },
                 });
@@ -124,12 +150,6 @@ const SuccessPage = () => {
       setError(error.message || '알 수 없는 에러가 발생했습니다.');
     }
   };
-
-  useEffect(() => {
-    if (!isCartDetailsLoading && cartDetails && !isProcessing) {
-      confirmPayment();
-    }
-  }, [isCartDetailsLoading, cartDetails, isProcessing]);
 
   return (
     <div>
