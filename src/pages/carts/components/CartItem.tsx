@@ -61,6 +61,9 @@ const CartItemComponent = () => {
   const navigateToHome = () => {
     navigate('/');
   };
+  const navigateToOrder = () => {
+    if (selectedItems.length !== 0) navigate('/order');
+  };
   return (
     <>
       {!cartItems || cartItems.length === 0 ? (
@@ -141,7 +144,8 @@ const CartItemComponent = () => {
           </div>
           <div className="p-4 flex justify-center align-middle bg-gray-100">
             <Button
-              onClick={() => navigate('/order')}
+              disabled={selectedItems.length === 0}
+              onClick={navigateToOrder}
               className="bg-customBlack text-white rounded-none font-medium text-xs p-2 w-[96%] hover:text-pointColor"
             >
               {calculateTotalAmount(cartItems, selectedItems)}원 구매하기
