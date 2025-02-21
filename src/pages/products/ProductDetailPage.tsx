@@ -11,7 +11,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import CartModal from './components/CartModal';
 import { ImageComponent } from './components/ImageComponent';
 import { Button } from '@/components/ui/button';
-import { IoStarSharp } from 'react-icons/io5';
 import { useGetReviewAverage } from '@/hooks/products/useGetReviewAverage';
 import { ReviewStar } from './components/ReviewStar';
 
