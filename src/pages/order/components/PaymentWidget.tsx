@@ -5,7 +5,6 @@ import useCartStore from '@/stores/cart/useCartStore';
 import { calculateQuantity, calculateTotalAmount } from '@/utils/cartUtil';
 import { loadTossPayments } from '@tosspayments/tosspayments-sdk';
 import { useEffect, useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
 const clientKey = import.meta.env.VITE_TOSS_CLIENT_KEY;
