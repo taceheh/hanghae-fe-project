@@ -1,6 +1,6 @@
 import GoogleLoginBtn from '@/pages/login/components/GoogleLoginBtn';
 import useAuthStore from '@/stores/auth/useAuthStore';
-import supabase from '@/supabase';
+import { createClient } from '@supabase/supabase-js';
 import { useNavigate } from 'react-router-dom';
 
 const Mypage = () => {
@@ -10,31 +10,39 @@ const Mypage = () => {
   const navigateHistoryPage = () => navigate('/myHistory');
   const navigateToSubPage = () => navigate('/subscription/history');
 
-  const handleDeleteUser = async () => {
-    if (!user?.id) return alert('사용자 정보가 없습니다.');
+  const supabase = createClient(
+    import.meta.env.VITE_SUPABASE_PROJECT_URL!,
+    import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  const deleteUser = async (userId: string) => {
+    const { error } = await supabase.auth.admin.deleteUser(userId);
+    if (error) {
+      console.error('User delete failed:', error);
+    } else {
+      alert('회원 탈퇴가 완료되었습니다.');
+      navigate('/');
+      console.log('User deleted successfully');
+    }
+  };
+
+  const handleDeleteUser = async (userId: string) => {
+    if (!userId) return alert('사용자 정보가 없습니다.');
 
     const confirmDelete = window.confirm('정말로 회원 탈퇴하시겠습니까?');
     if (!confirmDelete) return;
 
     try {
-      // const { error: authError } = await supabase
-      //   .from('auth.users')
-      //   .delete()
-      //   .eq('id', user.id);
-      // if (authError) throw new Error(`${authError.message}`);
-
       const { error: dbError } = await supabase
         .from('users')
         .delete()
-        .eq('id', user.id);
+        .eq('id', userId);
 
-      if (dbError)
+      if (dbError) {
         throw new Error(`users 테이블 삭제 실패: ${dbError.message}`);
-
-      // ✅ 로그아웃 후 홈으로 이동
-      await supabase.auth.signOut();
-      alert('회원 탈퇴가 완료되었습니다.');
-      navigate('/');
+      } else {
+        deleteUser(userId);
+      }
     } catch (error: any) {
       alert(`회원 탈퇴 실패: ${error.message}`);
     }
@@ -82,7 +90,13 @@ const Mypage = () => {
           회원정보 수정
         </div>
 
-        {/* <div onClick={handleDeleteUser}>회원 탈퇴하기</div> */}
+        <div
+          onClick={() => {
+            handleDeleteUser(user?.id!);
+          }}
+        >
+          회원 탈퇴하기
+        </div>
       </div>
     </div>
   );
