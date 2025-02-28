@@ -31,18 +31,12 @@ const SuccessPage = () => {
   const orderId = searchParams.get('orderId');
   const amount = searchParams.get('amount');
 
-  // const address = addressFormat({
-  //   zonecode: user?.address.zonecode ?? '',
-  //   roadAddress: user?.address.roadAddress ?? '',
-  //   detailAddress: user?.address.detailAddress ?? '',
-  // });
   useEffect(() => {
     const storedDeliveryInfo = sessionStorage.getItem('deliveryInfo');
     if (storedDeliveryInfo) {
-      console.log('✅ 세션 스토리지에서 배송 정보 로드:', storedDeliveryInfo);
       setDeliveryInfo(JSON.parse(storedDeliveryInfo));
     } else {
-      console.error('🚨 세션 스토리지에서 배송 정보를 찾을 수 없음.');
+      console.error('세션 스토리지에서 배송 정보를 찾을 수 없음.');
     }
   }, []);
 
@@ -58,7 +52,7 @@ const SuccessPage = () => {
       return;
     }
     if (!deliveryInfo) {
-      console.error('🚨 배송 정보가 없습니다.');
+      console.error('배송 정보가 없습니다.');
       return;
     }
 
@@ -93,11 +87,6 @@ const SuccessPage = () => {
       }
 
       const responseData = await response.json();
-
-      // const storedDeliveryInfo = sessionStorage.getItem('deliveryInfo');
-      // if (storedDeliveryInfo) {
-      //   setDeliveryInfo(JSON.parse(storedDeliveryInfo));
-      // }
 
       // 3. 주문 데이터 생성
       const orderData = {

@@ -21,7 +21,7 @@ export const SubCancelModal = ({
   paymentKey: string;
 }) => {
   const [selectedReason, setSelectedReason] = useState<string>(''); // 선택된 라디오 버튼 값
-  const [isOpen, setIsOpen] = useState<boolean>(false); // ✅ 모달 상태 추가
+  const [isOpen, setIsOpen] = useState<boolean>(false); // 모달 상태 추가
   const navigate = useNavigate();
 
   const SECRET_KEY = import.meta.env.VITE_TOSS_SECRET_KEY; // 환경 변수에서 API 키 가져오기
@@ -54,7 +54,7 @@ export const SubCancelModal = ({
         .update({ status: OrderStatus.주문취소 })
         .eq('id', orderId);
 
-      // ✅ 모달 닫고 페이지 이동
+      // 모달 닫고 페이지 이동
       setIsOpen(false); // 모달 닫기
       setTimeout(() => {
         navigate('/subscription/history', { replace: true }); // 페이지 이동
