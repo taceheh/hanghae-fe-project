@@ -11,9 +11,7 @@ const GoogleLoginBtn = () => {
       const { error: authError } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          // redirectTo: 'http://localhost:5173',
           scopes: 'openid email profile',
-          // token: response.credential, // Google OAuth 토큰 전달
         },
       });
 
