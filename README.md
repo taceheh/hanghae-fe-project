@@ -174,19 +174,23 @@
 <br/><br/>
 
 
-**☑️장바구니**
-- **수량 및 옵션 변경**: 장바구니에서 선택한 상품의 수량을 쉽게 수정 가능
-- **전체 상품 관리**: 장바구니 내 상품을 삭제하거나 선택적으로 구매 가능
-<img src="https://github.com/user-attachments/assets/60d49dcc-2269-4dfe-905f-b17a69bc19d2" width="400" height="480"/>
+**☑️원두 구독**
+- **맞춤형 원두 정기 구독**: 사용자가 원하는 원두, 용량, 기간, 배송 간격을 선택하여 구독 가능 
+- **자동 가격 계산 및 간편 결제**: 선택한 옵션에 따라 총 결제 금액이 자동 계산되며, 간편하게 결제 가능
+<img src="https://github.com/user-attachments/assets/622af0db-cdf5-474a-8754-c6221d2ec10d" width="400" height="480"/>
 
 
 <br/>
 
 
-**☑️상품 결제**
-- **다양한 결제 수단 지원**: 신용카드, 간편 결제 등 다양한 결제 수단 제공(예정.....)
-- **결제 내역 확인**: 구매 완료 후 결제 내역을 즉시 확인 가능
-<img src="https://github.com/user-attachments/assets/60d49dcc-2269-4dfe-905f-b17a69bc19d2" width="400" height="480"/>
+
+**☑️주문 및 결제 기능**
+- **배송 정보 관리** : 마이페이지에서 저장된 배송지 및 연락처를 선택하거나, 주문 단계에서 직접 입력 및 수정 가능
+- **안정적인 결제 처리**: 토스페이먼츠(Toss Payments) API를 활용한 안전한 결제 시스템 구축 
+- **결제 내역 확인**: 결제 성공 후 주문 상세 페이지에서 즉시 확인 가능
+<img src="https://github.com/user-attachments/assets/570ccd09-0f5b-4673-aac0-3a51e003405d" width="400" height="480"/>
+<img src="https://github.com/user-attachments/assets/f4a6fa97-c42c-4b4a-a022-cc97e9a1bbb8" width="400" height="480"/>
+
 
 
 <br/>
@@ -204,11 +208,12 @@
 </figure>
   
   <br/><br/>
-  
-## 🖥️API 명세서
 
 
-<br/><br/>
+
+
+
+
 
 ## 📈성능 최적화
 
