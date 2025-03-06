@@ -180,7 +180,7 @@
 <img src="https://github.com/user-attachments/assets/622af0db-cdf5-474a-8754-c6221d2ec10d" width="400" height="480"/>
 
 
-<br/>
+<br/><br/>
 
 
 
@@ -193,7 +193,7 @@
 
 
 
-<br/>
+<br/><br/>
 
 
  **☑️마이페이지**
