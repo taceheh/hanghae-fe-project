@@ -255,54 +255,72 @@ const { ref } = useInView({
     
 ## 🎯트러블 슈팅
 
-### **1. 좋아요 상태 반영 문제**
+### **1. 무한 스크롤에서 중복 요청 발생**
 #### 문제 상황
-- 좋아요 버튼을 눌렀을 때 상태가 변경되었지만 **UI에 즉시 반영되지 않고 새로고침이 필요**한 문제가 발생.
-- React Query의 캐시가 제대로 업데이트되지 않아 리스트 페이지와 상세 페이지의 데이터가 동기화되지 않음.
+- 무한 스크롤이 동작할 때, 한 번의 스크롤 이벤트에서 2페이지, 3페이지가 동시에 호출되는 문제 발생.
+- useInView를 사용하여 스크롤이 특정 지점에 도달하면 다음 페이지 데이터를 불러오도록 구현했지만 `fetchNextPage()`가 너무 빠르게 연속 호출되면서 동일한 요청이 중복으로 발
 
 #### 원인 분석
-- 좋아요 상태를 관리하는 React Query의 캐시 키가 **리스트 페이지**(`['products']`)와 **상세 페이지**(`['product', productId]`), **isLiked 상태**(`['isLiked', productId, userId]`)로 분리되어 있음.
-- 좋아요 상태 변경 후, 필요한 캐시를 모두 업데이트하지 않아 UI 동기화 실패.
+- `inView` 상태가 유지되는 동안 `fetchNextPage()`가 지속적으로 실행됨
+- 즉, 한 번의 스크롤 이벤트에서 2번 이상의 API 요청이 발생
+- 빠른 호출 간격을 조정하지 않으면 중복 데이터 로드 문제가 발생
 
 #### 해결 방법
-- `useLike` 훅에서 다음 세 가지 캐시를 모두 업데이트하도록 수정:
-  1. 리스트 페이지 캐시 (`['products']`)
-  2. 상세 페이지 캐시 (`['product', productId]`)
-  3. 좋아요 상태 캐시 (`['isLiked', productId, userId]`)
+- `setTimeout`을 활용하여 디바운스 적용
+- `clearTimeout`을 통해 이전 호출을 취소하여 불필요한 API 요청 방지
+- `threshold` 값을 조정하여 스크롤 감지 민감도 조절
 
 ### 최종 코드
-```typescript
-queryClient.setQueryData(['products'], (oldData: any) => {
-  if (!oldData) return oldData;
-  return {
-    ...oldData,
-    pages: oldData.pages.map((page: any) => ({
-      ...page,
-      data: page.data.map((product: any) =>
-        product.id === productId
-          ? {
-              ...product,
-              isLiked: !isLiked,
-              likeCount: product.likeCount + (isLiked ? -1 : 1),
-            }
-          : product
-      ),
-    })),
-  };
+```const { ref, inView } = useInView({
+  threshold: 0.3, // footer가 일정 부분 보일 때 감지
 });
 
-queryClient.setQueryData(['product', productId], (oldData: any) => {
-  if (!oldData) return oldData;
-  return {
-    ...oldData,
-    isLiked: !isLiked,
-    likeCount: oldData.likeCount + (isLiked ? -1 : 1),
-  };
-});
+const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useProducts(user?.id!);
 
-queryClient.setQueryData(['isLiked', productId, userId], !isLiked);
+useEffect(() => {
+  let timeoutId: NodeJS.Timeout;
+
+  if (inView && hasNextPage && !isFetchingNextPage) {
+    timeoutId = setTimeout(() => {
+      fetchNextPage();
+    }, 50); // 50ms 디바운스 적용
+  }
+
+  return () => clearTimeout(timeoutId);
+}, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 ```
+
+  <br/>
   
+### **2. 로그아웃 상태에서 좋아요 버튼 오류 발생**
+
+#### 문제 상황
+- 로그아웃 상태에서 상품 상세 페이지에 접근할 경우, `isLiked` 및 `useLike` 훅과 `likemutate` 불필요하게 실행됨.
+- `undefined` 값이 참조되면서 예기치 않은 오류 발생.
+
+#### 원인 분석
+- `useIsLiked`와 `useLike`가 로그인 여부(isLogin)와 무관하게 실행됨
+- 로그인 상태가 아닌 경우 `likeMutate`가 실행되지 않도록 처리해야 함
+
+#### 해결 방법
+- `isLogin` 상태를 먼저 확인하여 로그인한 경우에만 `likeMutate` 실행
+- 로그인하지 않은 경우, `likeMutate`가 빈 함수로 처리되도록 변경
+
+### 최종 코드
+```const { data: isLiked } = isLogin ? useIsLiked(productId!, userId!) : {};
+const { mutate: likeMutate } = isLogin
+  ? useLike(isLiked ?? false, productId!, userId!)
+  : { mutate: () => {} }; // 빈 함수로 처리
+
+const handleLikeToggle = () => {
+  if (!isLogin) {
+    alert('로그인이 필요합니다.');
+    navigate('/login');
+    return;
+  }
+  likeMutate();
+};
+```
   <br/><br/>
 
 ## 📁폴더구조
